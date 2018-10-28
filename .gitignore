@@ -6,3 +6,4 @@ cameras.yaml
 home-assistant.log
 zona_de_testes.yaml
 /~syncthing~home-assistant_v2.db-wal.tmp
+.storage/
