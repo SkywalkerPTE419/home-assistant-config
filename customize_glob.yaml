@@ -1,0 +1,7 @@
+input_boolean.*:
+ templates:
+   icon_color: >
+     if (state === 'on') return 'rgb(100, 200, 50)'; return 'rgb(54, 95, 140)';
+switch.*:
+  custom_ui_state_card: state-card-custom-ui
+  show_last_changed: true

@@ -1,0 +1,4 @@
+#homeassistant:
+
+#script:
+#  custom_ui_state_card: state-card-script-custom-text

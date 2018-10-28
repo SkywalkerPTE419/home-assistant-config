@@ -1,0 +1,23 @@
+- platform: google
+  cache: true
+  cache_dir: /tmp/tts
+  time_memory: 300
+  language: 'pt'
+
+  
+- platform: voicerss
+  api_key: !secret api_key_voicerss
+  language: 'pt-pt'
+  codec: mp3
+  format: '44khz_16bit_stereo'
+  
+- platform: amazon_polly
+  aws_access_key_id: !secret aws_acess_key
+  aws_secret_access_key: !secret aws_secret_acess_key
+  text_type: ssml
+  voice: Cristiano
+
+  
+
+  
+  

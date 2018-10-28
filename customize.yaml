@@ -1,0 +1,131 @@
+#script.join_script_send_file:
+#  custom_text: "WHATEVER1"    
+sensor.rodolfo_trabalho:
+  friendly_name: "Rodolfo até ao Trabalho"
+  icon: mdi:car
+  templates:
+    rgb_color: >
+      if (state > 25) {
+        return [0, 128, 0];
+      } else if (state >= 18 ) {
+        return [223, 76, 30];
+      } else {
+        return [35, 76, 99];
+      }
+
+
+#DARK SKY
+sensor.dark_sky_temperature:
+  friendly_name: "Temperatura na Rua"
+  icon: mdi:thermometer
+  templates:
+    hs_color: "if (state === '22.6') return [360, 100, 50]; else return [360, 100, 50];"
+sensor.dark_sky_summary:
+  friendly_name: "Ceu"
+sensor.dark_sky_humidity:
+  friendly_name: "Humididade na Rua"
+  templates:
+    hs_color: "if (state === '52.0') return 'rgb(251, 210, 41)'; return 'rgb(54, 95, 140)';"
+sensor.dark_sky_precip_probability:
+  friendly_name: "Probabilidade de chover"
+sensor.dark_sky_daily_high_temperature:
+  friendly_name: "Temperatura Máxima"
+sensor.dark_sky_daily_low_temperature:
+  friendly_name: "Temperatura Mínima"
+sensor.dark_sky_hourly_summary:
+  friendly_name: "Previsão próximos dias"
+sensor.dark_sky_daily_summary:
+  friendly_name: "Previsão de hoje"
+
+  
+
+  
+####CAMPAINHA ESCADA########
+sensor.campainha_escada:
+  friendly_name: "Campainha"
+  icon: mdi:bell
+#####AMBIENTE EM CASA#######  
+sensor.temperatura_em_casa:
+  friendly_name: "Temperatura em Casa"
+  icon: mdi:thermometer
+sensor.humidade_em_casa:
+  friendly_name: "Humidade em Casa"
+  icon: mdi:water
+  
+######GOOGLE TRAVEL#####
+
+  
+######FAMILIA#####  
+sensor.rodolfo:
+  icon: mdi:human-male
+sensor.paula:
+  icon: mdi:human-female
+sensor.rodolfogeocode:
+  icon: mdi:crosshairs-gps
+  friendly_name: "Localização Rodolfo"
+sensor.paulageocode:
+  icon: mdi:crosshairs-gps
+  friendly_name: "Localização Paula"
+proximity.rodolfo_casa:
+  icon: mdi:map-marker-distance
+  friendly_name: "Distância Rodolfo"
+proximity.paula_casa:
+  icon: mdi:map-marker-distance
+  friendly_name: "Distância Paula"
+
+  
+  
+#Gateway  
+light.gateway_light_34ce0091e2e0:
+  friendly_name: "Gateway Xiaomi"
+  custom_ui_state_card: state-card-custom-ui
+  show_last_changed: true 
+  confirm_controls_show_lock: false
+  icon: mdi:lightbulb-outline 
+  
+
+###################################################################################
+#                                                                                 #
+# Guardaos valores dos ,input_boolean, input_select, input_number, light e switch.#
+#                                                                                 #
+###################################################################################                                                                                 #
+automation.persistence_publish:
+  friendly_name: "Persistence Publish"
+automation.persistence_subscribe_binary:
+  friendly_name: "Persistence Subscribe (Binary)"
+automation.persistence_subscribe_select_option:
+  friendly_name: "Persistence Subscribe (Select Option)"
+automation.persistence_subscribe_select_value:
+  friendly_name: "Persistence from MQTT (Select Value)"
+switch.candeiro_sofa:
+  persistent: true
+switch.luz_casa_de_banho:
+  persistent: true
+switch.radio:
+  persistent: true
+switch.leds_bancada_cozinha:
+  persistent: true
+automation.ligar_radio_botao:
+  persistent: true  
+input_boolean.tv_cozinha:
+  persistent: true 
+input_boolean.box_sala:
+  persistent: true 
+input_boolean.box_bia:
+  persistent: true 
+
+
+
+
+
+
+################
+# TAB ORDERING #
+################
+group.home:
+  order: 1
+
+  
+
+
+       

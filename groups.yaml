@@ -1,0 +1,165 @@
+################################################
+#             VISTA DEFAULT                    #
+################################################
+default_view:
+  view: yes
+  icon: mdi:home
+  entities:
+    - group.estacaometeorologica
+    - group.sensoresdecasa
+    - group.transito
+    - group.cameras
+    - group.familia
+    - group.radio
+    - group.computador
+    - media_player.boxhall
+    - weather.lisboa
+  
+
+  
+  
+################################################
+#             VISTA CAMERAS                    #
+################################################
+
+cameras_transito:
+  view: yes
+  icon: mdi:cctv
+  entities:
+    - camera.ponte_vasco_da_gama_sul
+    - camera.ponte_vasco_da_gama_norte
+    - camera.ponte_25_abril_sul
+    - camera.ponte_25_abril_norte
+
+################################################
+#           VISTA DISPOSITIVOS NA REDE         #
+################################################    
+dispositivos_da_rede:
+  view: yes
+  icon: mdi:access-point-network
+  entities:
+    - group.dispositivos_na_rede
+
+
+dispositivos_na_rede:
+  entities:
+    - binary_sensor.sonoff_candeiro_sofa
+    - binary_sensor.sonoff_plantas_varanda
+    - binary_sensor.sonoff_aromatizador
+    - binary_sensor.sonoff_Interruptor_Casa_de_Banho
+    - binary_sensor.sonoff_radio_Casa_de_Banho
+    - binary_sensor.sonoff_interruptor_quarto_bia
+    - binary_sensor.sonoff_leds_bancada_cozinha
+    - binary_sensor.sonoff_candeiro_cama_bia
+    - binary_sensor.device_tracker_broadlinkcozinha
+    - binary_sensor.device_tracker_broadlinkquartobia
+    - binary_sensor.device_tracker_broadlinksala
+    - binary_sensor.device_tracker_tvcozinha
+
+    
+
+
+
+################################################
+#             GRUPO FAMÍLIA                    #
+################################################
+   
+familia:
+  name: Familia
+  entities:
+    - binary_sensor.water_leak_sensor_158d000255fd91
+    - sensor.estadorodolfo
+    - sensor.rodolfo_bateria_tlm
+    - proximity.rodolfo_casa
+    - sensor.rodolfogeocode
+    - camera.rodolfo_localizacao
+    - sensor.estadopaula
+    - sensor.paula_bateria_tlm
+    - proximity.paula_casa
+    - sensor.paulageocode
+    - camera.paula_localizacao
+
+################################################
+#         GRUPO SENSORES DE CASA               #
+################################################  
+    
+sensoresdecasa:
+  name: Sensores de Casa
+  entities:
+    - input_boolean.porta_rua
+    - input_boolean.campainha_rua
+  
+
+################################################
+#             GRUPO ESTAÇAO METEOROLOGICA      #
+################################################
+
+    
+estacaometeorologica:
+  name: Estaçao Meteorológica
+  entities:
+    - sensor.dark_sky_summary
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_humidity
+    - camera.odivelas
+    - sensor.temperatura_em_casa
+    - sensor.humidade_em_casa
+    
+
+    
+################################################
+#             GRUPO TRÂNSITO                   #
+################################################
+
+transito:
+  name: Tempo/Distância
+  entities:
+    - sensor.rodolfo_trabalho
+    
+################################################
+#             GRUPO COMPUTADOR                 #
+################################################
+
+computador:
+  name: PC
+  entities:
+    - switch.computador
+    - input_select.opcoespc
+
+          
+################################################
+#             GRUPO CAMERAS                    #
+################################################ 
+   
+cameras:
+  name: Cameras
+  entities:
+    - camera.portaescada
+
+################################################
+#             GRUPO de LUZES                   #
+################################################
+grupoluzes:
+  entities:
+    - switch.candeiro_sofa
+    - switch.leds_bancada_cozinha
+    - switch.luz_casa_de_banho
+    - switch.luz_cozinha
+    - switch.luz_despensa
+    - switch.luz_hal
+    - switch.luz_porta_rua
+    - switch.radio
+    - switch.interruptor_quarto_bia
+    - switch.candeiro_cama_bia
+    - switch.luz_sala
+
+################################################
+#             GRUPO de TVs                     #
+################################################
+grupotvs:
+  entities:
+    - input_boolean.box_sala
+    - switch.tv_cozinha
+    - switch.tv_bia
+
+

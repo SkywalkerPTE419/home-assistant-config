@@ -1,0 +1,21 @@
+#afico_consumos_diarios:
+#name: Consumos diários
+#entities:
+#  - sensor.consumption_daily_total_kwh
+#hours_to_show: 48
+#refresh: 30
+#
+#afico_consumos_mensais:
+#name: Consumos Mensais
+#entities:
+#  - sensor.consumption_monthly_total_kwh
+#hours_to_show: 48
+#refresh: 30  
+#
+#afico_consumos_totais:
+#name: Consumos Totais
+#entities:
+#  - sensor.consumption_total_kwh
+#hours_to_show: 48
+#refresh: 30  
+#
