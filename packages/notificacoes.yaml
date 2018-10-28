@@ -288,36 +288,36 @@ automation:
 #          message: "O preço do artigo {{states.sensor.gateway_xiaomi.name}} é de agora: {{ states.sensor.gateway_xiaomi.state }}"
           
 
-  - alias: Agua kiko uki
-    initial_state: true
-    trigger:
-      - platform: time
-        minutes: '/20'
-        seconds: '00'
-    condition:
-      condition: and
-      conditions:
-        - condition: state
-          entity_id: binary_sensor.water_leak_sensor_158d000255fd91
-          state: 'off'  
-        - condition: time
-          after: '08:00'
-          before: '21:30'
-        - condition: or
-          conditions:
-            - condition: state
-              entity_id: sensor.estadorodolfo
-              state: 'Em Casa'
-            - condition: state
-              entity_id: sensor.estadopaula
-              state: 'Em Casa'
-    action:
-      - service: tts.amazon_polly_say
-        data_template:
-          entity_id: media_player.boxhall
-          message: >
-                <speak><amazon:auto-breaths frequency='medium'>O kiko e o uki não têm água. Alguém os pode ajudar?</amazon:auto-breaths></speak>
-
+#  - alias: Agua kiko uki
+#    initial_state: true
+#    trigger:
+#      - platform: time
+#        minutes: '/20'
+#        seconds: '00'
+#    condition:
+#      condition: and
+#      conditions:
+#        - condition: state
+#          entity_id: binary_sensor.water_leak_sensor_158d000255fd91
+#          state: 'off'  
+#        - condition: time
+#          after: '08:00'
+#          before: '21:30'
+#        - condition: or
+#          conditions:
+#            - condition: state
+#              entity_id: sensor.estadorodolfo
+#              state: 'Em Casa'
+#            - condition: state
+#              entity_id: sensor.estadopaula
+#              state: 'Em Casa'
+#    action:
+#      - service: tts.amazon_polly_say
+#        data_template:
+#          entity_id: media_player.boxhall
+#          message: >
+#                <speak><amazon:auto-breaths frequency='medium'>O kiko e o uki não têm água. Alguém os pode ajudar?</amazon:auto-breaths></speak>
+#
 ###############################################################################
 #                                                                             #
 #                           S C R I P T S                            #
