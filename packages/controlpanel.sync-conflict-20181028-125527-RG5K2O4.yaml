@@ -1,0 +1,59 @@
+homeassistant:
+  customize:
+    input_text.dummy_tiles:
+      custom_ui_state_card: state-card-tiles
+      config:
+        columns: 3
+        column_width: 210px
+        row_height: 40px
+        gap: 15px
+        color: '#262B38'
+        color_on: 'var(--primary-color)'
+        #color_on: '#262B38'
+        color_off: '#616161'
+        entities:
+          - entity: switch.leds_bancada_cozinha
+            icon: mdi:white-balance-iridescent
+            image: /local/oxigenio.png
+            label: Leds Bancada Cozinha
+            column: 1
+            row: 1
+          - entity: switch.candeiro_sofa
+            icon: mdi:ceiling-light
+            label: Candeiro Sofá
+            column: 1
+            row: 2
+          - entity: switch.luz_casa_de_banho
+            icon: mdi:lightbulb-outline
+            image: /local/orbital.png
+            label: Casa de Banho
+            column: 1
+            row: 3
+          - entity: switch.radio
+            icon: mdi:radio
+            label: Rádio
+            column: 1
+            row: 4
+
+
+
+
+            
+
+
+    
+group:
+  g1:
+    name: AINDA EM TESTES
+    entities:
+      - input_text.dummy_tiles
+  
+input_boolean:
+  switch1:
+  
+  
+input_text:
+  command:
+    name: Button
+  dummy_tiles:
+    name: dummy

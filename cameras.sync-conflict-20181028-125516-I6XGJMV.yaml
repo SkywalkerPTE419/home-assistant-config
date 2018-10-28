@@ -1,0 +1,32 @@
+- name: Rodolfo Localizacao
+  platform: generic
+  still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.device_tracker.rodolfo.attributes.latitude }},{{ states.device_tracker.rodolfo.attributes.longitude }}&zoom=16&size=500x500&maptype=satellite&markers=color:green%7Clabel:JA%7C{{ states.device_tracker.rodolfo.attributes.latitude }},{{ states.device_tracker.rodolfo.attributes.longitude }}&key=AIzaSyCYqNjDzUowr_P1DhLVIhVdJbCKoYTWqYc
+  limit_refetch_to_url_change: true  
+
+- name: Paula Localizacao
+  platform: generic
+  still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.device_tracker.paula.attributes.latitude }},{{ states.device_tracker.paula.attributes.longitude }}&zoom=16&size=500x500&maptype=satellite&markers=color:green%7Clabel:JA%7C{{ states.device_tracker.paula.attributes.latitude }},{{ states.device_tracker.paula.attributes.longitude }}&key=AIzaSyCYqNjDzUowr_P1DhLVIhVdJbCKoYTWqYc
+  limit_refetch_to_url_change: true    
+  
+
+- name: Ponte 25 Abril Norte  
+  platform: generic
+  still_image_url: https://www.lusoponte.pt/assets/cam1_P25_00001.jpg
+
+- name: Ponte 25 Abril Sul
+  platform: generic
+  still_image_url: https://www.lusoponte.pt/assets/cam2_P25_00001.jpg
+  
+- name: Ponte Vasco da Gama Norte
+  platform: generic
+  still_image_url: https://www.lusoponte.pt/assets/cam1_PVG_00001.jpg
+ 
+- name: Ponte Vasco da Gama Sul
+  platform: generic
+  still_image_url: https://www.lusoponte.pt/assets/cam2_PVG_00001.jpg
+  
+- name: odivelas
+  platform: generic
+  still_image_url: https://www.yr.no/place/Portugal/Lisboa/Odivelas//meteogram.png
+  
+  

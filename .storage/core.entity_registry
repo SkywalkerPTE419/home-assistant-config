@@ -1,0 +1,134 @@
+{
+    "data": {
+        "entities": [
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "light.gateway_light_34ce0091e2e0",
+                "name": null,
+                "platform": "xiaomi_aqara",
+                "unique_id": "rgb34ce0091e2e0"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "sensor.illumination_34ce0091e2e0",
+                "name": null,
+                "platform": "xiaomi_aqara",
+                "unique_id": "illumination34ce0091e2e0"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "sensor.pressure_158d0001fa763c",
+                "name": null,
+                "platform": "xiaomi_aqara",
+                "unique_id": "pressure158d0001fa763c"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "sensor.humidity_158d0001fa763c",
+                "name": null,
+                "platform": "xiaomi_aqara",
+                "unique_id": "humidity158d0001fa763c"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "sensor.temperature_158d0001fa763c",
+                "name": null,
+                "platform": "xiaomi_aqara",
+                "unique_id": "temperature158d0001fa763c"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "media_player.mediaroom_5b8e39630e604355974957e8313223ca",
+                "name": null,
+                "platform": "mediaroom",
+                "unique_id": "5b8e3963-0e60-4355-9749-57e8313223ca\r"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "media_player.viera_et60_series",
+                "name": null,
+                "platform": "panasonic_viera",
+                "unique_id": "4D454930-0200-1000-8001-8CC121D7521A"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "media_player.mediaroom_stb192168164",
+                "name": null,
+                "platform": "mediaroom",
+                "unique_id": "STB192.168.1.64"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "sensor.wifi_signal_sensor",
+                "name": null,
+                "platform": "mqtt",
+                "unique_id": "2c3ae80b395b-wifisignal"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "binary_sensor.water_leak_sensor_158d000255fd91",
+                "name": "\u00c1gua Uki e Kiko",
+                "platform": "xiaomi_aqara",
+                "unique_id": "status158d000255fd91"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "binary_sensor.vibration_158d0002abb33a",
+                "name": null,
+                "platform": "xiaomi_aqara",
+                "unique_id": "status158d0002abb33a"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "sensor.bed_activity_158d0002abb33a",
+                "name": null,
+                "platform": "xiaomi_aqara",
+                "unique_id": "bed_activity158d0002abb33a"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "sensor.tilt_angle_158d0002abb33a",
+                "name": null,
+                "platform": "xiaomi_aqara",
+                "unique_id": "final_tilt_angle158d0002abb33a"
+            },
+            {
+                "config_entry_id": null,
+                "device_id": null,
+                "disabled_by": null,
+                "entity_id": "sensor.coordination_158d0002abb33a",
+                "name": null,
+                "platform": "xiaomi_aqara",
+                "unique_id": "coordination158d0002abb33a"
+            }
+        ]
+    },
+    "key": "core.entity_registry",
+    "version": 1
+}
