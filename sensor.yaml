@@ -1,0 +1,316 @@
+﻿- platform: mqtt
+  state_topic: 'system/contagem'
+  name: 'Tensao'
+  unit_of_measurement: 'V'
+  value_template: '{{ value_json.tensao }}'
+- platform: mqtt
+  state_topic: 'system/contagem'
+  name: 'Corrente'
+  unit_of_measurement: 'A'
+  value_template: '{{ value_json.corrente }}'
+- platform: mqtt
+  state_topic: 'system/contagem'
+  name: 'Potencia'
+  unit_of_measurement: 'W'
+  value_template: '{{ value_json.potencia }}'
+- platform: mqtt
+  state_topic: 'system/contagem'
+  name: 'Consumo'
+  unit_of_measurement: 'Wh'
+  value_template: '{{ value_json.consumo }}'   
+
+  
+
+
+#SENSORES MQTT    
+- platform: mqtt
+  state_topic: 'sensor/temperature'
+  name: 'Temperatura em Casa'
+
+- platform: mqtt
+  state_topic: 'sensor/humidity'
+  name: 'Humidade em Casa'
+  unit_of_measurement: '%'
+
+
+#Plaforma Dark Sky
+- platform: darksky
+  api_key: !secret api_key_darsky
+  language: pt
+  monitored_conditions:
+    - summary
+    - precip_type
+    - precip_probability
+    - temperature
+    - humidity
+    - temperature_max
+    - temperature_min
+    - hourly_summary
+    - daily_summary
+    
+
+#Plataforma data e horas
+- platform: time_date
+  display_options:
+  - 'time'
+  - 'date'
+  - 'date_time'
+  - 'time_date'
+  - 'time_utc'
+  
+#Plataforma Google Travel Time
+# De casa ate ao trabalho Rodolfo
+- platform: google_travel_time
+  name: rodolfo_trabalho
+  api_key: !secret api_key_googletravel 
+  origin: !secret origem_googletravel
+  destination: !secret destino_googletravel
+  options:
+    mode: driving
+
+- platform: google_travel_time
+  name: Casa_trabalho_paula
+  api_key: !secret api_key_googletravel 
+  origin: Senhor Roubado
+  destination: Marquês de Pombal, 1250-021 Lisboa
+  options:
+    mode: transit
+    transit_mode: subway
+    
+- platform: google_travel_time
+  name: trabalho_casa_paula
+  api_key: !secret api_key_googletravel 
+  origin: Marquês de Pombal, 1250-021 Lisboa
+  destination: Senhor Roubado
+  options:
+    mode: transit
+    transit_mode: subway
+
+
+
+#Plataforma Geocode Rodolfo   
+- platform: google_geocode
+  name: Rodolfogeocode
+  origin: device_tracker.rodolfo
+  options: street_number
+  display_zone: hide
+  api_key: !secret api_key_geocode
+
+#Plataforma Geocode Rodolfo   
+- platform: google_geocode
+  name: Paulageocode
+  origin: device_tracker.paula
+  options: street_number
+  display_zone: hide
+  api_key: !secret api_key_geocode  
+  
+
+#Estado da Bateria Rodolfo
+- platform: mqtt
+  state_topic: "zanzito/rodolfo/battery_level"
+  name: "Rodolfo Bateria Telemovel"
+  unit_of_measurement: '%'
+  retain: true
+  
+#Estado da Bateria Paula
+- platform: mqtt
+  state_topic: "zanzito/paula/battery_level"
+  name: "Paula Bateria Telemovel"
+  unit_of_measurement: '%'
+  retain: true
+  
+
+#Estado da Bateria Rodolfo  
+- platform: mqtt
+  name: Estado Zanzito Rodolfo
+  state_topic: "zanzito/rodolfo/status"
+  unit_of_measurement: ''
+  retain: true
+
+#Estado da Bateria Paula  
+- platform: mqtt
+  name: Estado Zanzito Paula
+  state_topic: "zanzito/paula/status"
+  unit_of_measurement: ''
+  retain: true
+
+
+
+#TEMPLATES  
+- platform: template
+  sensors:
+    #Estado do Tempo
+    estadodotempo:
+      friendly_name: 'Tempo'
+      value_template: > 
+        {%- if is_state('sensor.dark_sky_summary', 'Partly Cloudy') -%}
+          Parcialmente Nublado
+        {%- elif is_state('sensor.dark_sky_summary', 'Clear') -%}
+          Limpo
+        {%- elif is_state('sensor.dark_sky_summary', 'Rain') -%}
+          Chuvoso
+        {%- elif is_state('sensor.dark_sky_summary', 'Mostly Cloudy') -%}
+          Muito Nublado
+        {%- elif is_state('sensor.dark_sky_summary', 'Overcast') -%}
+          Escuro
+        {%- elif is_state('sensor.dark_sky_summary', 'Light Rain') -%}
+          Aguaceiros  
+        {%- elif is_state('sensor.dark_sky_summary', 'Drizzle') -%}    
+          Chuviscos  
+        {%- elif is_state('sensor.dark_sky_summary', 'Breezy and Overcast') -%}    
+          Fresco e escuro 
+        {%- elif is_state('sensor.dark_sky_summary', 'Rain and Breezy') -%}    
+          Fresco e chuvoso
+        {%- elif is_state('sensor.dark_sky_summary', 'Rain and Windy') -%}    
+            Chuva e vento
+        {%- elif is_state('sensor.dark_sky_summary', 'Breezy and Mostly Cloudy') -%}    
+            Fresco e muito Nublado
+        {%- elif is_state('sensor.dark_sky_summary', 'Breezy') -%}    
+            Fresco   
+        {%- elif is_state('sensor.dark_sky_summary', 'Breezy and Partly Cloudy') -%}    
+            Fresco e Parcialmente Nublado 
+        {%- elif is_state('sensor.dark_sky_summary', 'Drizzle and Windy') -%}    
+            Chuviscos e ventoso  
+        {%- elif is_state('sensor.dark_sky_summary', 'Light Rain and Breezy') -%}   
+            fresco com aguaceiros        
+        {%- endif -%}
+    estadozanzitorodolfo:
+      friendly_name: 'Estado Zanzito Rodolfo'
+      value_template: >
+        {% if states.sensor.estado_zanzito_rodolfo.state | int == 1 %}
+        Conectado
+        {% else %}
+        Desconectado
+        {% endif %}        
+    estadozanzitopaula:
+      friendly_name: 'Estado Zanzito Paula'
+      value_template: >
+        {% if states.sensor.estado_zanzito_paula.state | int == 1 %}
+        Conectado
+        {% else %}
+        Desconectado
+        {% endif %}         
+    # Horas em que o Sol Nasce e se Põe
+    sunrise:
+      friendly_name: 'Amanhecer'
+      value_template: '{{ as_timestamp(states.sun.sun.attributes.next_rising)|timestamp_custom("%H:%M:%S") }}'
+      entity_id:
+        - sun.sun
+    sunset:
+      friendly_name: 'Por do Sol'
+      value_template: '{{ as_timestamp(states.sun.sun.attributes.next_setting)|timestamp_custom("%H:%M:%S") }}'
+      entity_id:
+        - sun.sun
+    #Informação sobre a Localização do Rodolfo
+    rodolfo:
+      friendly_name: 'Estado Rodolfo'
+      value_template: > 
+        {%- if is_state('device_tracker.rodolfo', 'not_home') -%}
+           Ausente
+        {%- endif -%}
+        {%- if is_state('device_tracker.rodolfo', 'home') -%}
+           Em Casa
+        {%- endif -%}      
+        {%- if is_state('device_tracker.rodolfo', 'notrabalho') -%} 
+           No Trabalho
+        {%- endif -%}               
+    paula:
+      friendly_name: 'Estado Paula'
+      value_template: > 
+        {%- if is_state('device_tracker.paula', 'not_home') -%}
+           Ausente
+        {%- endif -%}
+        {%- if is_state('device_tracker.paula', 'home') -%}
+           Em Casa
+        {%- endif -%}     
+        {%- if is_state('device_tracker.paula', 'notrabalhop') -%} 
+           No Trabalho
+        {%- endif -%} 
+    rodolfo_bateria_tlm:
+      friendly_name: "Estado da Bateria do Rodolfo"
+      value_template: "{{ states.sensor.rodolfo_bateria_telemovel.state | int }}"
+      unit_of_measurement: '%'
+      icon_template: '{% if states.sensor.rodolfo_bateria_telemovel.state | int == 100 %}
+                           mdi:battery
+                        {% elif states.sensor.rodolfo_bateria_telemovel.state | int >= 90 %}
+                           mdi:battery-90
+                        {% elif states.sensor.rodolfo_bateria_telemovel.state | int >= 80 %}
+                           mdi:battery-80
+                        {% elif states.sensor.rodolfo_bateria_telemovel.state | int >= 70 %}
+                           mdi:battery-70
+                        {% elif states.sensor.rodolfo_bateria_telemovel.state | int >= 60 %}
+                           mdi:battery-60
+                        {% elif states.sensor.rodolfo_bateria_telemovel.state | int >= 50 %}
+                           mdi:battery-50
+                        {% elif states.sensor.rodolfo_bateria_telemovel.state | int >= 40 %}
+                           mdi:battery-40
+                        {% elif states.sensor.rodolfo_bateria_telemovel.state | int >= 30 %}
+                           mdi:battery-30
+                        {% elif states.sensor.rodolfo_bateria_telemovel.state | int >= 20 %}
+                           mdi:battery-20
+                        {% elif states.sensor.rodolfo_bateria_telemovel.state | int >= 10 %}
+                           mdi:battery-10
+                        {% elif states.sensor.rodolfo_bateria_telemovel.state == "unknown" %}
+                           mdi:battery-alert
+                        {% else %}
+                           battery-outline
+                        {% endif %}'
+    paula_bateria_tlm:
+      friendly_name: "Estado da Bateria da Paula"
+      value_template: "{{ states.sensor.paula_bateria_telemovel.state | int }}"
+      unit_of_measurement: '%'
+      icon_template: '{% if states.sensor.paula_bateria_telemovel.state | int == 100 %}
+                           mdi:battery
+                        {% elif states.sensor.paula_bateria_telemovel.state | int >= 90 %}
+                           mdi:battery-90
+                        {% elif states.sensor.paula_bateria_telemovel.state | int >= 80 %}
+                           mdi:battery-80
+                        {% elif states.sensor.paula_bateria_telemovel.state | int >= 70 %}
+                           mdi:battery-70
+                        {% elif states.sensor.paula_bateria_telemovel.state | int >= 60 %}
+                           mdi:battery-60
+                        {% elif states.sensor.paula_bateria_telemovel.state | int >= 50 %}
+                           mdi:battery-50
+                        {% elif states.sensor.paula_bateria_telemovel.state | int >= 40 %}
+                           mdi:battery-40
+                        {% elif states.sensor.paula_bateria_telemovel.state | int >= 30 %}
+                           mdi:battery-30
+                        {% elif states.sensor.paula_bateria_telemovel.state | int >= 20 %}
+                           mdi:battery-20
+                        {% elif states.sensor.paula_bateria_telemovel.state | int >= 10 %}
+                           mdi:battery-10
+                        {% elif states.sensor.paula_bateria_telemovel.state == "unknown" %}
+                           mdi:battery-alert
+                        {% else %}
+                           battery-outline
+                        {% endif %}'
+    estadopaula:
+      friendly_name: "Estado Paula"
+      value_template: "{{ states.sensor.paula.state }} "
+      unit_of_measurement: ''
+      icon_template: '{% if is_state("sensor.paula", "Em Casa")%}
+                           mdi:home
+                        {% elif is_state("sensor.paula", "No Trabalho") %}
+                           mdi:seat-recline-normal
+                        {% elif is_state("sensor.paula", "Ausente") %}
+                           mdi:map-marker-outline
+                        {%- endif -%}'     
+    estadorodolfo:
+      friendly_name: "Estado Rodolfo"
+      value_template: "{{ states.sensor.rodolfo.state }} "
+      unit_of_measurement: ''
+      icon_template: '{% if is_state("sensor.rodolfo", "Em Casa")%}
+                           mdi:home
+                        {% elif is_state("sensor.rodolfo", "No Trabalho") %}
+                           mdi:airplane
+                        {% elif is_state("sensor.rodolfo", "Ausente") %}
+                           mdi:map-marker-outline
+                        {%- endif -%}' 
+
+    
+#- platform: countdown
+#  name: wedding
+#  date: "20-07-2018 18:00"    
+        
+        
+        

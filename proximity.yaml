@@ -1,0 +1,23 @@
+rodolfo_casa:
+  zone: home
+  devices:
+    - device_tracker.rodolfo
+  unit_of_measurement: m
+  
+rodolfo_trabalho:
+  zone: notrabalho
+  devices:
+    - device_tracker.rodolfo
+  unit_of_measurement: m
+  
+paula_casa:
+  zone: home
+  devices:
+    - device_tracker.paula
+  unit_of_measurement: m
+  
+paula_trabalho:
+  zone: notrabalhop
+  devices:
+    - device_tracker.paula
+  unit_of_measurement: m
