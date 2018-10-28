@@ -8,4 +8,7 @@ zona_de_testes.yaml
 /~syncthing~home-assistant_v2.db-wal.tmp
 .storage/
 storage/
-*.token
+~syncthing~home-assistant_v2.db-shm.tmp
+syncthing~home-assistant_v2.db-shm.tmp
+syncthing~home-assistant_v2.db.tmp
+~syncthing~home-assistant_v2.db.tmp
