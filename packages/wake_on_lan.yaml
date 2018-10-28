@@ -1,0 +1,67 @@
+homeassistant:
+
+switch:
+  - platform: wake_on_lan
+    mac_address: 02:03:32:72:30:F9  
+    name: "Computador"
+    host: 192.168.1.200   
+    
+
+
+group:
+  Wake on Lan:
+    name: Wake-on-Lan
+    entities:
+      - switch.computador
+      
+input_select:
+  opcoespc:
+    name: Opções de Energia PC
+    options:
+      - Reiniciar
+      - Desligar
+      - Nenhum
+      - Adormecer
+      - Hibernar
+    initial: Nenhum
+    icon: mdi:desktop-tower
+
+shell_command:
+  reiniciar: curl -k http://192.168.10.68:8020/?action=System.Restart
+  desligar: curl -k http://192.168.10.68:8020/?action=System.Shutdown
+  adormecer: curl -k http://192.168.10.68:8020/?action=System.Sleep
+  hibernar: curl -k http://192.168.10.68:8020/?action=System.Hibernate
+
+
+automation:
+  - alias: pc_reiniciar
+    trigger:
+      platform: state
+      entity_id: input_select.opcoespc
+      to: "Reiniciar"
+    action:
+      - service: shell_command.reiniciar
+      
+  - alias: pc_desligar
+    trigger:
+      platform: state
+      entity_id: input_select.opcoespc
+      to: "Desligar"
+    action:
+      - service: shell_command.desligar
+      
+  - alias: pc_adormecer
+    trigger:
+      platform: state
+      entity_id: input_select.opcoespc
+      to: "Adormecer"
+    action:
+      - service: shell_command.adormecer
+      
+  - alias: pc_hibernar
+    trigger:
+      platform: state
+      entity_id: input_select.opcoespc
+      to: "Hibernar"
+    action:
+      - service: shell_command.hibernar 

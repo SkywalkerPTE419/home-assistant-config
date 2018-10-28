@@ -1,0 +1,443 @@
+homeassistant:
+
+###############################################################################
+#                                                                             #
+#                           C U S T O M I Z E                                 #
+#                                                                             #
+###############################################################################   
+
+
+
+
+
+###############################################################################
+#                                                                             #
+#                           A U T O M A Ç Õ E S                               #
+#                                                                             #
+###############################################################################  
+
+automation:
+
+
+      
+#Notifica os utilizadores da casa quando a campainha da escada toca. 
+  - alias: Campainha da escada
+    initial_state: true
+    trigger:
+      platform: mqtt
+      topic: tele/teste/RESULT
+    condition:
+      condition: template
+      value_template: '{{ trigger.payload_json.RfReceived.Data == "9DC761" }}'  
+    action:
+#    - service: mqtt.publish
+#      data:
+#        topic: tele/teste/RESULT
+#        payload: 9DC761off
+#        retain: 'true'        
+    - service: notify.geraltelegram
+      data_template:
+        message: ""
+        title: ""
+        data:
+          photo:
+            url: 'http://192.168.1.20:8080/photo.jpg'
+            caption: 'Tocaram na campainha da escada ver ao vivo http://192.168.1.20:8080/video'
+
+#Informa os utilizadores da temperatura dentro de casa, e o estado do tempo na rua via telegram.
+  - alias: Estado do tempo
+    trigger:
+      at: '07:40:00'
+      platform: time
+    action:
+      - service: notify.geraltelegram
+        data_template:
+          title: 'Meteorologia'
+          message: "Bom dia , estão {{ states.sensor.temperatura_em_casa.state }} graus em casa. Hoje o céu está {{ states.sensor.dark_sky_summary.state }} estão neste momento {{ states.sensor.dark_sky_temperature.state }} graus , e {{ states.sensor.dark_sky_humidity.state }}% de humidade. A temperatura máxima vai ser de {{ states.sensor.dark_sky_daily_high_temperature.state }} graus e {{ states.sensor.dark_sky_daily_low_temperature.state }} graus de mínima. Existe {{ states.sensor.dark_sky_precip_probability.state }}% de probabilidade de chover hoje.{% if states('sensor.dark_sky_precip_probability') | int > 50 %} Não te esqueças de levar o chapéu de chuva. Tem um bom dia chuvoso ;){% else %} Tem um bom dia.{% endif %}"   
+
+          
+#Notifica os utilizadores da Casa se existe nova correspondência na caixa do correio.
+  - alias: Notificacao Novo Correio
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: binary_sensor.correio
+      to: 'on'
+    action:
+#    - service: mqtt.publish
+#      data:
+#        topic: home/433toMQTT
+#        payload: 1035062off
+#        retain: 'true'
+    - service: notify.geraltelegram
+      data_template:
+        title: 'Novo Correio Recebido'
+        message: "Dia {{states.sensor.date.state}} às {{states.sensor.time.state}}"
+
+        
+#Notifica os utilizadores quando a porta da rua tocou.
+  - alias: Notificacao utilizadores porta rua
+    initial_state: true
+    trigger:
+      platform: mqtt
+      topic: /campainha
+      payload: campainha
+    action:
+      - service: xiaomi_aqara.play_ringtone
+        data:
+          gw_mac: 34:CE:00:91:E2:E0
+          ringtone_id: 10
+          ringtone_vol: 30
+#      - service: notify.pushnotification
+#        data_template:
+#          title: 'Alguem tocou na campainha da rua'
+#          message: "Dia {{states.sensor.date.state}} às {{states.sensor.time.state}}"
+#          data:
+#            icon: /local/campainha.png
+      - service: notify.geraltelegram
+        data:
+          title: 'Alguem tocou na campainha da rua'
+          message: 'Queres abrir a porta?'
+          data:
+            inline_keyboard:
+              - "SIM:/simquero"
+              - "NÃO:/naoquero"
+          
+  - alias: Resposta a sim da abertura automatica da porta
+    hide_entity: false
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        data: '/simquero'            
+    action:
+      - service: mqtt.publish
+        data:
+          topic: /interruptor/set
+          payload: 1
+      - delay: 00:00:01
+      - service: mqtt.publish
+        data:
+          topic: /interruptor/set
+          payload: 0
+          retain: 'true'
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.porta_rua
+        
+  - alias: 'Resposta a nao da abertura automatica da porta'
+    hide_entity: true
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        data: '/naoquero'
+    action:
+      - service: telegram_bot.answer_callback_query
+        data_template:
+          callback_query_id: '{{ trigger.event.data.id }}'
+          message: 'Ok, não abrir.'
+                    
+
+#Informa os utilizadores se a porta de casa foi aberta. 
+  - alias: Casa de porta aberta
+    initial_state: true
+    trigger:
+      platform: mqtt
+      topic: tele/teste/RESULT
+    condition:
+      condition: template
+      value_template: '{{ trigger.payload_json.RfReceived.Data == "B39107" }}'  
+    action:
+    - service: notify.geraltelegram
+      data_template:
+        title: 'Porta de Casa Aberta'
+        message: "Dia {{states.sensor.date.state}} às {{states.sensor.time.state}}" 
+
+
+  
+
+          
+#Informa os utilizador que houve uma tentativa de ataque ao home assistant.          
+  - alias: "Tentativa de Ataque Home Assistant"
+    trigger:
+      - platform: state
+        entity_id: persistent_notification.httplogin
+    condition:
+      - condition: template
+        value_template: "{{ trigger.to_state.state != 'None' }}"
+    action:
+      - service: notify.telegram
+        data_template:
+          title: "Tentativa de Ataque Home Assistant"
+          message: "{{ states.persistent_notification.httplogin.attributes.message }}"
+          data:
+            url: https://whatismyipaddress.com/ip/{{ states.persistent_notification.httplogin.attributes.message.split("from ") [1]}}
+            
+
+      
+      
+#Beatriz
+  - alias: Beatriz ir para a cama
+    trigger:
+      platform: time
+      at: '21:15:00'
+    condition:
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+    action:
+      - service: tts.amazon_polly_say
+        data_template:
+          entity_id: media_player.boxhall
+          message: >
+                 <speak><amazon:auto-breaths frequency='medium'>Biatris está na hora de ires lavar os dentes e ires para a cama não te esqueças de arrumar a mochila da escola</amazon:auto-breaths></speak>     
+      - delay: 00:03
+      - service: tts.amazon_polly_say
+        data_template:
+          entity_id: media_player.boxhall
+          message: >
+                 <speak><amazon:auto-breaths frequency='medium'>biatris ja lavaste os dentes se nao lavaste estás á espera do que</amazon:auto-breaths></speak>     
+
+  - alias: Beatriz ir para a escola
+    trigger:
+      platform: time
+      at: '08:50:00'
+    condition:
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+    action:
+      - service: tts.amazon_polly_say
+        data_template:
+          entity_id: media_player.boxhall
+          message: >
+                 <speak><amazon:auto-breaths frequency='medium'>Olá outra vez, beatris já ligaste o motor do aquário? Já fizéste a cama? Já preparaste as marmitas? Despacha te faltam 10 minutos para tocar.</amazon:auto-breaths></speak>            
+      - delay: '00:05:00'
+      - service: tts.amazon_polly_say
+        data_template:
+          entity_id: media_player.boxhall
+          message: >
+                <speak><amazon:auto-breaths frequency='medium'>Faltam 5 minutos para tocar,  vou desligar todas as tves, o rádio, e as luzes</amazon:auto-breaths></speak>
+      - delay: '00:00:10'
+      - service: script.desligartudosaidapaula
+      
+
+          
+
+
+          
+          
+          
+          
+# Notifica-me se algum dos meus equipamentos ficaram offline.
+
+  - alias: Notificaçao equipamentos offline
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: binary_sensor.sonoff_candeiro_sofa, binary_sensor.sonoff_plantas_varanda, binary_sensor.sonoff_aromatizador, binary_sensor.sonoff_Interruptor_Casa_de_Banho, binary_sensor.sonoff_radio_Casa_de_Banho, binary_sensor.sonoff_interruptor_quarto_bia, binary_sensor.sonoff_leds_bancada_cozinha, binary_sensor.sonoff_candeiro_cama_bia, binary_sensor.device_tracker_broadlinkcozinha, binary_sensor.device_tracker_broadlinkquartobia, binary_sensor.device_tracker_broadlinksala, binary_sensor.device_tracker_tvcozinha
+      from: 'on'
+      to: 'off'
+      for: 
+        minutes: 5
+    action:
+    - service: notify.telegram
+      data_template:
+        title: "Home Assistant"
+        message: "{{  trigger.to_state.attributes.friendly_name  }} está desligado"
+        
+#Informa os utilizadores da temperatura dentro de casa, e o estado do tempo na rua via tts.
+  - alias: Estado do tempo
+    trigger:
+      at: '08:00:00'
+      platform: time
+    action:
+      - service: tts.amazon_polly_say
+        data_template:
+          entity_id: media_player.boxhall
+          message: >
+                <speak><amazon:auto-breaths frequency='medium'>"Bom dia hoje o tempo está , {{ states.sensor.dark_sky_summary.state }} estão neste momento , {{ states.sensor.dark_sky_temperature.state |int }} graus  e {{ states.sensor.dark_sky_humidity.state | int }} por cento de humidade. A temperatura máxima vai ser de {{ states.sensor.dark_sky_daily_high_temperature.state | int }} graus e {{ states.sensor.dark_sky_daily_low_temperature.state | int }} graus de mínima. Existe {{ states.sensor.dark_sky_precip_probability.state | int }} por cento de probabilidade de chover hoje {% if states('sensor.dark_sky_precip_probability') | int > 50 %} Não te esqueças de levar o chapéu de chuva . Tem um bom dia chuvoso {% else %} , Tenham um bom dia{% endif %}"</amazon:auto-breaths></speak>
+        
+        
+
+        
+#Informa o Dono da Casa se os artigos da Gearbest que definiu, se os mesmos automentaram de preço ou baixaram.
+#  - alias: "Gearbest"
+#    hide_entity: True
+#    trigger:
+#      platform: time
+#      minutes: '/60'
+#      seconds: 00
+#    condition:
+#      condition: or
+#      conditions:
+#        - condition: template
+#          value_template: '{{ states.sensor.gateway_xiaomi.state | float > 23.18 }}'
+#        - condition: template
+#          value_template: '{{ states.sensor.gateway_xiaomi.state | float < 23.18 }}'
+#    action:
+#     - service: notify.rodolfozanzito
+#        data:
+#          message: "O preço do artigo {{states.sensor.gateway_xiaomi.name}} é de agora: {{ states.sensor.gateway_xiaomi.state }}"
+          
+
+  - alias: Agua kiko uki
+    initial_state: true
+    trigger:
+      - platform: time
+        minutes: '/20'
+        seconds: '00'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: binary_sensor.water_leak_sensor_158d000255fd91
+          state: 'off'  
+        - condition: time
+          after: '08:00'
+          before: '21:30'
+        - condition: or
+          conditions:
+            - condition: state
+              entity_id: sensor.estadorodolfo
+              state: 'Em Casa'
+            - condition: state
+              entity_id: sensor.estadopaula
+              state: 'Em Casa'
+    action:
+      - service: tts.amazon_polly_say
+        data_template:
+          entity_id: media_player.boxhall
+          message: >
+                <speak><amazon:auto-breaths frequency='medium'>O kiko e o uki não têm água. Alguém os pode ajudar?</amazon:auto-breaths></speak>
+
+###############################################################################
+#                                                                             #
+#                           S C R I P T S                            #
+#                                                                             #
+###############################################################################    
+
+script:               
+
+  desligartudosaidapaula:
+    sequence:
+      - service: homeassistant.turn_off
+        data:
+          entity_id: group.grupoluzes     
+      - service: homeassistant.turn_off
+        data:
+          entity_id: group.grupotvs   
+
+
+###############################################################################
+#                                                                             #
+#                          S E N S O R S                                      #
+#                                                                             #
+###############################################################################  
+sensor:
+        
+  - platform: mqtt
+    state_topic: 'tele/teste/RESULT'
+    value_template: '{{value_json.RfReceived.Data}}'
+    name: campainhaporta
+    expire_after: 1
+
+
+###############################################################################
+#                                                                             #
+#                           B I N A R Y   S E N S O R S                       #
+#                                                                             #
+###############################################################################  
+        
+binary_sensor:
+
+
+  - platform: template
+    sensors:
+      campainhateste:
+        value_template: '{{ is_state("sensor.campainhaporta", "B39107") }}'
+        delay_off: '00:01:00'
+        device_class: motion
+
+  - platform: mqtt
+    state_topic: "home/433toMQTT"
+    name: "Campainha"
+    payload_on: "10340193"
+    payload_off: "10340193off"
+    
+  - platform: mqtt
+    state_topic: "home/433toMQTT"
+    name: "correio"
+    payload_on: "1035062"
+    payload_off: "1035062off"
+  
+  - platform: mqtt
+    state_topic: "home/433toMQTT"
+    name: "porta da escada"
+    payload_on: "11768071"
+    payload_off: "11768071off"
+  
+ 
+  
+###############################################################################
+#                                                                             #
+#                           N O T I F I E R S                                 #
+#                                                                             #
+###############################################################################  
+
+
+
+telegram_bot:
+  platform: polling
+  api_key: !secret api_key_telegram
+  allowed_chat_ids:
+    - !secret chatid01
+    - !secret chatid02
+
+ 
+notify:
+
+  - name: telegram
+    platform: telegram
+    chat_id: !secret chatid01
+  
+  - name: telegramp
+    platform: telegram
+    chat_id: !secret chatid02
+
+  - name: rodolfozanzito
+    platform: zanzito
+    device-name: rodolfo
+    
+  - name: paulazanzito
+    platform: zanzito
+    device-name: paula
+    
+#  - name: geralzanzito
+#    platform: group
+#    services: 
+#      - service: rodolfozanzito
+#      - service: paulazanzito
+      
+  - name: geraltelegram
+    platform: group
+    services: 
+      - service: telegram
+      - service: telegramp
+      
+  
+#  - name: pushnotification
+#    platform: html5
+#    gcm_api_key: !secret gcm_api_key_api
+#    gcm_sender_id: !secret gcm_sender_id_Id
+
+
+    
+

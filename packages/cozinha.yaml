@@ -1,0 +1,263 @@
+homeassistant:
+
+###############################################################################
+#                                                                             #
+#                           C U S T O M I Z E                                 #
+#                                                                             #
+###############################################################################
+
+  customize:
+
+
+    switch.leds_bancada_cozinha:
+      icon: mdi:lightbulb-outline 
+    switch.luz_despensa:
+      icon: mdi:lightbulb-outline 
+    switch.luz_cozinha:
+      icon: mdi:lightbulb-outline 
+    sensor.broadlinkcozinha:
+      icon: mdi:checkbox-marked-circle
+      friendly_name: "Broadlink da Cozinha"
+
+###############################################################################
+#                                                                             #
+#                           A U T O M A Ç Õ E S                               #
+#                                                                             #
+###############################################################################   
+automation:
+#Liga a fita de Leds da Cozinha entre as 18:00 e as 07:00 quando é detectado movimento. Automação Nº 1
+
+  - alias: Liga Leds da Cozinha
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: binary_sensor.leds_da_bancada
+      to: 'on'
+    condition:
+      condition: time
+      after: '19:30'
+      before: '07:00'
+    action:
+      service: script.ligarledsbancada
+        
+ 
+      
+#Liga a Tv da Cozinha às 07:46 e posteriormente muda o canal para a RTP1 para ver as noticias da manhã. 
+  - alias: Liga TV da Cozinha Switch_8
+    initial_state: true
+    trigger:
+      platform: time
+      at: '07:46:10'
+    condition:
+    - condition: time
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+    action:
+      service: switch.broadlink_send_packet_192_168_1_3
+      data:
+        packet:
+        - 'JgBYAAABJZQRExESEhISEhISEhISNhISEhISEhISEhIRExETETcSEhISEjYSEhI3EhIRExESEhISNxISETcSEhI3ETcSNxI2EgAGDgABJkoSAAxCAAElShIADQU='         
+      
+     
+
+
+#Desliga a luz da despensa passado 2 min
+  - alias: Desliga a luz da despensa
+    trigger:
+      platform: state
+      entity_id: switch.luz_despensa
+      to: 'on'
+      for:
+        minutes: 2
+    action:
+      service: switch.turn_off
+      data:
+        entity_id: switch.luz_despensa    
+
+
+
+#Desliga Leds bancada às 06:30 
+  - alias: Desliga leds bancada as 0630
+    initial_state: true
+    trigger:
+      platform: time
+      at: '06:30:00'
+    action:
+      service: switch.turn_off
+      data:
+        entity_id: switch.leds_bancada_cozinha       
+  
+###############################################################################
+#                                                                             #
+#                           S C R I P T S                                     #
+#                                                                             #
+###############################################################################  
+
+
+script:               
+#Script referente à automação Nº 3
+  ligarledsbancada:
+    sequence:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.leds_bancada_cozinha
+      - delay:
+          minutes: 10
+      - service: switch.turn_off
+        data:
+          entity_id: switch.leds_bancada_cozinha
+      - service: mqtt.publish
+        data:
+          topic: tele/teste/RESULT
+          payload: B6FB79off
+          retain: 'true'
+   
+
+  tv_cozinha_on:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_3
+      data:
+        packet:
+        - 'JgBYAAABJZQRExESEhISEhISEhISNhISEhISEhISEhIRExETETcSEhISEjYSEhI3EhIRExESEhISNxISETcSEhI3ETcSNxI2EgAGDgABJkoSAAxCAAElShIADQU='  
+
+  tv_cozinha_off:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_3
+      data:
+        packet:
+        - 'JgBYAAABJZQRExESEhISEhISEhISNhISEhISEhISEhIRExETETcSEhISEjYSEhI3EhIRExESEhISNxISETcSEhI3ETcSNxI2EgAGDgABJkoSAAxCAAElShIADQU='  
+
+###############################################################################
+#                                                                             #
+#                           S E N S O R S                                     #
+#                                                                             #
+###############################################################################   
+
+sensor:
+
+  - platform: mqtt
+    name: "ldrtvcozinha"
+    state_topic: "tele/ldrtvcozinha/SENSOR"
+    value_template: "{{value_json.ANALOG.A0}}"
+
+###############################################################################
+#                                                                             #
+#                           B I N A R Y   S E N S O R S                       #
+#                                                                             #
+###############################################################################  
+        
+binary_sensor:
+
+  - platform: mqtt
+    name: "Leds da bancada"
+    payload_on: "B6FB79"
+    payload_off: "B6FB79off"
+    sensor_class: motion
+    state_topic: "tele/teste/RESULT"
+    value_template: '{{ value_json.RfReceived.Data}}' 
+    retain: true
+
+  - platform: mqtt
+    name: "Sonoff Leds Bancada Cozinha"
+    state_topic: "tele/sonoff108/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    
+  - platform: device_tracker_sensor
+    entities:
+      - device_tracker.broadlinkcozinha
+
+
+###############################################################################
+#                                                                             #
+#                           S W I T C H E S                                   #
+#                                                                             #
+############################################################################### 
+  
+  
+switch:
+
+  - platform: template
+    switches:
+      tv_cozinha:
+        friendly_name: "Tv Cozinha"
+        value_template: '{% if states.sensor.ldrtvcozinha.state|int > 400 %}on{% else %} off {% endif %}'
+        turn_on:
+          service: script.tv_cozinha_on
+          entity_id: script.tv_cozinha_on
+        turn_off:
+          service: script.tv_cozinha_off
+          entity_id: script.tv_cozinha_off
+        icon_template: mdi:television
+
+
+
+  - platform: broadlink
+    host: 192.168.1.3
+    mac: 'b4:43:0d:f9:1d:03'
+ 
+
+  - platform: mqtt
+    name: "Luz Cozinha"
+    state_topic: "stat/cozinha/POWER"
+    command_topic: "cmnd/cozinha/POWER"
+    availability_topic: "tele/cozinha/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: false
+ 
+  - platform: mqtt
+    name: "Luz Despensa"
+    state_topic: "stat/bhonofredespensa/POWER1"
+    command_topic: "cmnd/bhonofredespensa/POWER1"
+    availability_topic: "tele/bhonofredespensa/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: false   
+
+  - platform: mqtt
+    name: "Leds Bancada Cozinha"
+    state_topic: "stat/sonoff108/POWER"
+    command_topic: "cmnd/sonoff108/power"
+    availability_topic: "tele/sonoff108/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: false
+    
+###############################################################################
+#                                                                             #
+#                         G R O U P                                           #
+#                                                                             #
+###############################################################################          
+    
+group:
+
+  Cozinha:
+    view: yes
+    icon: mdi:fridge
+    entities:
+      - group.cozinhagroup
+
+  cozinhagroup:
+    control: hidden
+    name: Cozinha
+    entities:
+      - switch.tv_cozinha
+      - switch.leds_bancada_cozinha
+      - switch.luz_cozinha
+      - switch.luz_despensa
+    

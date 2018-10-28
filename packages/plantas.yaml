@@ -1,0 +1,88 @@
+homeassistant:  
+  customize:
+    switch.regar_plantas_varanda:
+      icon: mdi:flower
+###############################################################################
+#                                                                             #
+#                           A U T O M A Ç Õ E S                               #
+#                                                                             #
+###############################################################################   
+automation:
+#Rega as Plantas nos dias definidos e informa a dona da casa que a rega foi feita com sucesso. Automação Nº 14
+  - alias: Regar Plantas
+    trigger:
+      - platform: time
+        at: '18:20:00'
+    condition:
+      - condition: time
+        weekday:
+          - mon
+          - wed
+          - fri
+          - sun
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.regar_plantas_varanda
+      - delay: 00:01:00
+      - service: switch.turn_off
+        data:
+          entity_id: switch.regar_plantas_varanda
+###############################################################################
+#                                                                             #
+#                           S C R I P T S #                                    #
+#                                                                             #
+###############################################################################  
+#Não existem scripts para as automações acima referidas.
+###############################################################################
+#                                                                             #
+#                           S W I T C H E S                                   #
+#                                                                             #
+###############################################################################  
+switch:
+#Switch Nº 4  
+  - platform: mqtt
+    name: "Regar Plantas Varanda"
+    state_topic: "stat/plantas/POWER"
+    command_topic: "cmnd/plantas/power"
+    availability_topic: "tele/plantas/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+    
+###############################################################################
+#                                                                             #
+#                         BINARY SENSORS                                      #
+#                                                                             #
+###############################################################################      
+    
+binary_sensor:
+  - platform: mqtt
+    name: "Sonoff Plantas Varanda"
+    state_topic: "tele/plantas/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    
+    
+###############################################################################
+#                                                                             #
+#                           G R O U P S                                       #
+#                                                                             #
+###############################################################################  
+group:
+
+  plantas:
+    view: yes
+    icon: mdi:flower
+    entities:
+      - group.plantasgroup
+
+  plantasgroup:
+    control: hidden
+    name: Plantas
+    entities:
+      - switch.regar_plantas_varanda

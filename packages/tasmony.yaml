@@ -1,0 +1,503 @@
+homeassistant:
+
+automation:
+
+#wemos_sala
+
+
+  - alias: wemos_sala
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.tv_sala
+        to: 'on'
+    action:
+      service: script.on_off
+
+#ON_OFF
+  - alias: 'ON_OFF'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "100BCBD" }}'  
+    action:
+      service: script.on_off
+      
+#OK
+  - alias: 'OK'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1009293" }}'  
+    action:
+      service: script.ok
+      
+#CIMA
+  - alias: 'CIMA'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1005253" }}'  
+    action:
+      service: script.cima
+      
+#BAIXO
+  - alias: 'BAIXO'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "100D2D3" }}'  
+    action:
+      service: script.baixo
+      
+#ESQUERDA
+  - alias: 'ESQUERDA'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1007273" }}'  
+    action:
+      service: script.esquerda
+      
+#DIREITA
+  - alias: 'DIREITA'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "100F2F3" }}'  
+    action:
+      service: script.direita
+      
+#PLAY/PAUSA
+  - alias: 'PLAY/PAUSA'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1900392" }}'  
+    action:
+      service: script.play_pausa
+
+      
+#STOP
+  - alias: 'STOP'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "19043D2" }}'  
+    action:
+      service: script.stop
+      
+#GUIDE
+  - alias: 'GUIDE'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "190E170" }}'  
+    action:
+      service: script.guide
+
+#GRAVAR
+  - alias: 'GRAVAR'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "190A332" }}'  
+    action:
+      service: script.gravar
+      
+#SAIR
+  - alias: 'SAIR'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "100CBCA" }}'  
+    action:
+      service: script.sair
+      
+#VOLTAR
+  - alias: 'VOLTAR'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1002B2A" }}'  
+    action:
+      service: script.voltar
+ 
+#TECLA1
+  - alias: 'TECLA1'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1000809" }}'  
+    action:
+      service: script.tecla1      
+      
+#TECLA2
+  - alias: 'TECLA2'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1008889" }}'  
+    action:
+      service: script.tecla2            
+      
+#TECLA3
+  - alias: 'TECLA3'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1004849" }}'  
+    action:
+      service: script.tecla3            
+
+#TECLA4
+  - alias: 'TECLA4'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "100C8C9" }}'  
+    action:
+      service: script.tecla4           
+      
+#TECLA5
+  - alias: 'TECLA55'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1002829" }}'  
+    action:
+      service: script.tecla5       
+
+#TECLA66
+  - alias: 'TECLA6'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "100A8A9" }}'  
+    action:
+      service: script.tecla6           
+      
+#TECLA7
+  - alias: 'TECLA7'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1006869" }}'  
+    action:
+      service: script.tecla7       
+
+#TECLA8
+  - alias: 'TECLA8'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "100E8E9" }}'  
+    action:
+      service: script.tecla8          
+      
+#TECLA9
+  - alias: 'TECLA9'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1001819" }}'  
+    action:
+      service: script.tecla9  
+
+#TECLA0
+  - alias: 'TECLA0'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1009899" }}'  
+    action:
+      service: script.tecla0 
+
+#MENU
+  - alias: 'MENU'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1000E0F" }}'  
+    action:
+      service: script.menu
+
+#CANAL_CIMA
+  - alias: 'CANAL_CIMA'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "1002C2D" }}'  
+    action:
+      service: script.canal_cima     
+      
+      
+#CANAL_BAIXO
+  - alias: 'CANAL_BAIXO'
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.IrReceived.Data == "100ACAD" }}'  
+    action:
+      service: script.canal_baixo  
+ 
+#LUZ TECTO
+  - alias: luz tecto
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      condition: template
+      value_template: '{{ trigger.payload_json.IrReceived.Data == "1008E8F" }}'      
+    action:
+      service_template: >
+       {% if is_state('switch.luz_sala', 'off') %}
+       switch.turn_on  
+       {%- elif is_state('switch.luz_sala', 'on') -%}
+       switch.turn_off
+       {% endif %}
+      entity_id: switch.luz_sala
+
+#LUZ SOFA
+  - alias: luz sofa
+    trigger:
+      platform: mqtt
+      topic: tele/infra/RESULT
+    condition:
+      condition: template
+      value_template: '{{ trigger.payload_json.IrReceived.Data == "1004E4F" }}'      
+    action:
+      service_template: >
+       {% if is_state('switch.luz_sofa', 'off') %}
+       switch.turn_on  
+       {%- elif is_state('switch.luz_sofa', 'on') -%}
+       switch.turn_off
+       {% endif %}
+      entity_id: switch.luz_sofa    
+      
+
+script:
+  on_off:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBOAAsUFBYUFRUKCxQVFQoLCgoVFRUKChUKAAtmDBMUFRUVFAsLFBUVCgoLChUUFQsKFQoAC2YLFBQVFRUUCwsUFRUKCgsKFBUVCwoVCgANBQAAAAAAAAAAAAA' 
+  ok:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBUAAsUFBUUFhUKCxQUFgoKCwoVCgsKCgoLFAsAC2UMExQWFBUUCwsUFBYKCgsKFQoLCgoLChUKAAtmCxQUFRQWFAsKFRQVCwoLChUKCwoKCgsUCwANBQAAAAA=' 
+  cima:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBOAAwTFBUVFRQLCxQUFQsKCwoVCgsUCwoUAAtxCxQUFRUVFAsLFBUUCwoLChQLCxQLChUAC28LFBUVFBUUCwsUFRULCgoKFAsLFAsKFAANBQAAAAAAAAAAAAA=' 
+  baixo:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgA0AAwTFBUVFRQLCxQUFgoKCwoUCwsUFRUKAAtmDBMUFRQWFAsLFBQVCwoLChQLChUVFAsADQUAAAAA' 
+  esquerda:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBOAAsVFBUUFRULChUUFQsKCgoVCwoKCxQVAAtwCxQVFRQVFQoLFBUVCgoLChQLCwoLFBUAC3ALFBUUFRUVCgsUFRQLCgsKFQoLCgoVFAANBQAAAAAAAAAAAAA=' 
+  direita:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgA0AAsUFBUVFRQLCxQUFQsKFBYKCgsKCwoVAAtvCxQVFRUUFAsLFBUVCgoVFQsKCgoLChQADQUAAAAA' 
+  play_pausa:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgA0AAsUFBUUFhUKChUUFQsKFAsLFBQLCxQLAAtlDBQUFRQVFQsKFRQVCwoUCwsUFAsLFAsADQUAAAAA' 
+  stop:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgAwAAsVFRQVFBULChUUFQsKFQoKFRQVFAALcQsUFBUVFRUKCxQUFQsKFQoLFBUVFQANBQAAAAAAAAAA=' 
+  gravar:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgA0AAwTFBYUFRQLCxQUFgoKFQsKCgsUCwoUAAtxDBMUFRUVFAsLFBQVCwoVCgsKCxQLChUADQUAAAAA'
+  guide:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgA4AAoVFBUVFRQLChUUFQsKFAsLCgoLCgoLFAsAC2ULFBUVFRQUCwsUFRUKCxQLCgoLCgsKChUKAA0F'
+
+  sair:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgA0AAsUFRUUFRQLCxQVFQsKFQoKCgsKCxQUAAtxCxQVFBUVFAsLFBUUCwoUCwsKCwoKFRUADQUAAAAA'
+  voltar:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBOAAwTFRQUFRULChUVFAsKFAsLCgoVFRQLAAtlDRIVFRUUFAsLFBUVCwoVCgoKCxUUFQsAC2UMExUUFRUUCwoVFRQLChQLCwoKFRUUCwANBQAAAAAAAAAAAAA='
+  
+  tecla1:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBUAAwTFhQVFBYIDBQWEwwIDAgNCAwJDAgXEwwAC1kMExYUFhMWCA0TFhMMCAwIDQgNCAwIFxQLAAtaDBMWExYUFQkMExYUCwgNCA0IDAgNCBcTDAANBQAAAAA='
+  tecla2:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBOAAwTFhMWExYKCxMWFAsKCwoKCgsKFRMWAAtkDBMWExYTFgkMExYUCwkMCAwLCgoVExYAC2QNEhYTFhQWCgoUFhMLCwoKCQsLCxQUFgANBQAAAAAAAAAAAAA='
+  tecla3:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBUAAwTFhMWExYIDRMWFAsIDQgMCQwIFwgNEwwAC1kMExYUFhMWCA0TFhMMCAwIDQgNCBgGDRQLAAtaDBMWExYUFggMFBYTCwkMCA0IDAkWCA0TDAANBQAAAAA='
+  tecla4:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBOAAwTFhMXExYIDBQWEwsJDAgNCBcTDAgXAAtkCxQWExYTFggNExYUCwgNCAwJFhQLCBcAC2ULExYUFhMWCA0TFhMMCA0IDAgXFAsIFwANBQAAAAAAAAAAAAA='
+  tecla5:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBOAAwTFhMWFBYIDBQWEwsJDAgNCBcTFhMMAAtZDBMWFBYTFggNExYTDAgNCAwIFxMWFAsAC1oMExcTFhMWCAwUFhMMCAwIDQgYEhcTCwANBQAAAAAAAAAAAAA='
+  tecla6:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBOAAkWExYUFRQLChUUFQoLCgsJCxQLChUUAAtmCRYUFRQVFAsKFRQWCQsKCwkLFAsKFRQAC2YKFRQWFBUUCwoVFBUKCwoLCQsUCwoVFAANBQAAAAAAAAAAAAA='
+  tecla7:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - ' JgA4AAsVFRQUFRULChUUFQsKCgsKChQLCwoLFAsAC2UMExQWFBUUCwsUFBYKCgsKCwoUCwoLChUKAA0F'
+  tecla8:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBOAAsUFhMWExYIDRMWFAsIDQgXEwwIDAkWAAtlChQWFBYTFggNExYTDAgMCRYUCwkMCBcAC2QMExYTFhQWCAwUFhMLCQwIFxMMCA0IFwANBQAAAAAAAAAAAAA='
+  tecla9:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBOAAwTFhMWExYIDRMWFAsJDAgXEwwIFxMMAAtZDBMWExYTFgkMExYUCwkMCBcTDAgXEwwAC1kMExYUFhMWCA0TFhMMCA0IFxMLCRYUCwANBQAAAAAAAAAAAAA='
+  tecla0:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgBIAAwTFhQVFBYIDBQWEwwIDAgXFBYTFgALZAsUFhMWExYIDRMWEwwIDQgXExYTFgALZAwTFhQWExYIDRMWEwwIDAkWFBYTFgANBQ=='
+  menu:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgAwAAwTFBUVFRQLCxQVFBUVFAsLFBUVCgALZg0SFRUUFRQLCxQVFRUUFQoLFRQVCwANBQAAAAAAAAAA'
+        
+  canal_cima:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgAwAAoVFBUUFhQLChUUFQsKFRQUFgoKFQALcAsUFBYUFRQLCxQVFQoKFRUVFAsKFQANBQAAAAAAAAAA'
+        
+  canal_baixo:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_4
+      data:
+        packet:
+        - 'JgAwAAoVFBUVFBULChUUFQsKFRQUCwsUFQALcAsUFRUVFBQLCxQUFgoKFRUVCgsUFQANBQAAAAAAAAAA'
+  
+  
+
+    
+###############################################################################
+#                                                                             #
+#                         BINARY SENSORS                                      #
+#                                                                             #
+###############################################################################      
+    
+binary_sensor:
+  - platform: mqtt
+    name: "Tv Sala"
+    state_topic: "tele/infra/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+
+        
+        

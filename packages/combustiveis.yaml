@@ -1,0 +1,104 @@
+homeassistant:
+
+
+ 
+
+  
+
+###############################################################################
+#                                                                             #
+#                           G R O U P                                         #
+#                                                                             #
+###############################################################################       
+      
+group:
+
+  combustiveis:
+    view: yes
+    icon: mdi:gas-station
+    entities:
+      - group.combustiveisgroup
+    
+    
+  combustiveisgroup:
+    control: hidden
+    name: Posto Cepsa Olival Basto
+    entities:
+      - sensor.fuel_170157_gasoleo_especial
+      - sensor.fuel_170157_gasoleo_simples
+      - sensor.fuel_170157_gasolina_especial_95
+      - sensor.fuel_170157_gasolina_simples_95
+
+      
+
+
+  
+###############################################################################
+#                                                                             #
+#                         A U T O M A T I O N S                               #
+#                                                                             #
+###############################################################################    
+automation:
+
+#Ao iniciar o Home Assistant corre o batch fuel_info.sh
+- alias: Correr Combustiveis
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+    - service: shell_command.correr_combustiveis
+    
+    
+#Actualiza os preços todos os dias às 2 da manhã, só  não altera se o posto de combustivel não tiver alterado na base deles.
+- alias: Atualiza todos os dias
+  trigger:
+    platform: time
+    at: '02:00'
+  action:
+    - service: shell_command.correr_combustiveis
+    
+    
+# O  utilizador ao escrever /combustiveis no telegram recebe os preços actuais do Posto de Combustível
+- alias: Precos Combustiveis
+  hide_entity: true
+  trigger: 
+    platform: event
+    event_type: telegram_command
+    event_data:
+      command: '/combustiveis'
+  action:
+    service: notify.telegram
+    data_template:
+      title: 'Preços Combustíveis'
+      message: "
+                Gasolina Simples - {{states.sensor.fuel_gasolina_simples_95.state}} 
+
+                Gasolina Óptima - {{states.sensor.fuel_gasolina_especial_95.state}} 
+
+                Gásoleo Simples - {{states.sensor.fuel_gasoleo_simples.state}} 
+                  
+                Gásoleo Optima  - {{states.sensor.fuel_gasoleo_especial.state}}"    
+
+
+###############################################################################
+#                                                                             #
+#                         S H E L L _ C O M MM A N D                          #
+#                                                                             #
+###############################################################################    
+             
+shell_command:
+  correr_combustiveis: 'bash /config/script/fuel.info.sh -f "170157"'
+
+                 
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+     

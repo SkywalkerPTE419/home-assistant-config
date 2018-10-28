@@ -1,0 +1,379 @@
+homeassistant:
+
+
+
+###############################################################################
+#                                                                             #
+#                           A U T O M A Ç Õ E S                               #
+#                                                                             #
+###############################################################################  
+
+automation:
+
+#################################################
+#                                               #
+#              UTILIZADOR Nº1                   #
+#                                               #
+#################################################
+
+
+        
+# Informa o Utilizador que o Rodolfo acabou de chegar à zona de Residência mas que pode ou não estar em casa. 
+# - alias: Rodolfo Acabou de chegar a zona de residencia
+#   trigger:
+#     - platform: numeric_state
+#       entity_id: proximity.rodolfo_casa
+#       below: 200
+#   action:
+#     - service: input_select.select_option
+#       data:
+#         entity_id: input_select.rodolfo_status_dropdown
+#         option: Apenas Chegou
+#     - service: notify.pushnotification
+#       data:
+#         title: 'O Rodolfo acabou de chegar à zona de residência'
+#         message: 'Às {{states.sensor.time.state}}'
+#         target: ["MEUPC", "MEU_TELEMOVEL"]
+#
+#Informa o utilizador que o Rodolfo já se encontra em casa, ou seja ja passaram 10 min desde que ele chegou a zona de residência.
+# - alias: Rodolfo esta em Casa
+#   trigger:
+#     - platform: state
+#       entity_id: input_select.rodolfo_status_dropdown
+#       to: 'Apenas Chegou'
+#       for:
+#         minutes: 10
+#     - platform: state
+#       entity_id: input_select.rodolfo_status_dropdown
+#       from: 'Apenas Saiu'
+#       to: 'Apenas Chegou'
+#   action:
+#     - service: input_select.select_option
+#       data:
+#         entity_id: input_select.rodolfo_status_dropdown
+#         option: Em Casa
+#     - service: notify.pushnotification
+#       data:
+#         title: 'O Rodolfo está em casa'
+#         message: 'Desde as {{states.sensor.time.state}}'
+#         target: ["MEUPC", "MEU_TELEMOVEL"]
+#
+#Informa o utilizador que o Rodolfo apenas saiu de Casa, mas que não saiu definitivamente. Exemplo: Foi só ás compras rapido e volta em menos de 10 min.
+# - alias: Rodolfo saiu de Casa
+#   trigger:
+#     - platform: numeric_state
+#       entity_id: proximity.rodolfo_casa
+#       above : 20
+#   action:
+#     - service: input_select.select_option
+#       data:
+#         entity_id: input_select.rodolfo_status_dropdown
+#         option: Apenas Saiu
+#     - service: notify.pushnotification
+#       data:
+#         title: 'O Rodolfo acabou de sair de casa'
+#         message: 'Às {{states.sensor.time.state}}'
+#         target: ["MEUPC", "MEU_TELEMOVEL"]
+#         
+#Informa o utilizador que o Rodolfo já saiu mesmo de Casa como da zona de residência.
+# - alias: Rodolfo está Ausente
+#   trigger:
+#     - platform: numeric_state
+#       entity_id: proximity.rodolfo_casa
+#       above: 200
+#       for:
+#         minutes: 10
+#   action:
+#     - service: input_select.select_option
+#       data:
+#         entity_id: input_select.rodolfo_status_dropdown
+#         option: Ausente
+#     - service: notify.pushnotification
+#       data:
+#         title: 'O Rodolfo está ausente'
+#         message: 'Desde as  {{ (now().strftime("%s") | int - 600) | timestamp_custom("%H:%M")}}'
+#         target: ["MEUPC", "MEU_TELEMOVEL"]
+#
+#Informa o utilizador que o Rodolfo não foi a casa durante 24 horas.
+# - alias: Rodolfo ausente por mais de 24 horas
+#   trigger:
+#     - platform: state
+#       entity_id: input_select.rodolfo_status_dropdown
+#       to: 'Ausente'
+#       for:
+#         hours: 24
+#   action:
+#     - service: input_select.select_option
+#       data:
+#         entity_id: input_select.rodolfo_status_dropdown
+#         option: Ausencia Prolongada
+#     - service: notify.pushnotification
+#       data:
+#         title: 'O Rodolfo está em ausência prolongada'
+#         message: 'Desde do dia {{states.sensor.date.state}} às {{states.sensor.time.state}}'
+#         target: ["MEUPC", "MEU_TELEMOVEL"]
+#
+#Informa o utilizador que o Rodolfo acabou de chegar ao Trabalho.
+# - alias: Rodolfo acabou de chegar ao trabalho
+#   trigger:
+#     - platform: numeric_state
+#       entity_id: proximity.rodolfo_trabalho
+#       below: 1000
+#   action:
+#     - service: input_select.select_option
+#       data:
+#         entity_id: input_select.rodolfo_status_dropdown
+#         option: notrabalho
+#     - service: notify.pushnotification
+#       data:
+#         title: 'O Rodolfo está no trabalho'
+#         message: 'Desde as {{states.sensor.time.state}}'
+#         target: ["MEUPC", "MEU_TELEMOVEL"]
+#
+#Informa o utilizador que o Rodolfo acabou de sair do Trabalho.
+# - alias: Rodolfo acabou de sair do trabalho
+#   trigger:
+#     - platform: numeric_state
+#       entity_id: proximity.rodolfo_trabalho
+#       above: 1000
+#   action:
+#     - service: input_select.select_option
+#       data:
+#         entity_id: input_select.rodolfo_status_dropdown
+#         option: Ausente
+#     - service: notify.pushnotification
+#       data:
+#         title: 'O Rodolfo saiu do trabalho'
+#         message: 'Às {{states.sensor.time.state}}'
+#         target: ["MEUPC", "MEU_TELEMOVEL"]
+#
+#################################################
+#                                               #
+#              UTILIZADOR Nº2                   #
+#                                               #
+#################################################
+
+
+        
+# Informa o Utilizador que a Paula acabou de chegar à zona de Residência mas que pode ou não estar em casa. 
+  - alias: Paula Acabou de chegar a zona de residencia
+    initial_state: true
+    trigger:
+      platform: template
+      value_template: >
+          {% if states.sensor.paulageocode.attributes.Street == "Rua Timor"%}
+            true
+           {% else %}
+            false
+          {% endif %}
+    condition:
+      condition: numeric_state
+      entity_id: sensor.ha_runtime_in_minutes
+      above: 2    
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.paula_status_dropdown
+          option: Apenas Chegou
+      - service: notify.telegram
+        data:
+          title: 'A Paula acabou de chegar à zona de residência'
+          message: 'Às {{states.sensor.time.state}}'
+          #target: ["MEUPC", "MEU_TELEMOVEL"]
+      
+
+#Informa o utilizador que a Paula já se encontra em casa, ou seja ja passaram 10 min desde que ele chegou a zona de residência.
+  - alias: Paula esta em Casa
+    initial_state: true
+    trigger:
+      platform: template
+      value_template: >
+          {% if states.sensor.paulageocode.attributes["Street Number"] == "115" or states.sensor.paulageocode.attributes["Street Number"] == "114" %}
+            true
+          {% else %}
+            false
+          {% endif %}
+    condition:
+      condition: numeric_state
+      entity_id: sensor.ha_runtime_in_minutes
+      above: 2  
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.paula_status_dropdown
+          option: Em Casa
+      - service: notify.telegram
+        data:
+          title: 'A Paula está em casa'
+          message: 'Desde as {{states.sensor.time.state}}'
+          #target: ["MEUPC", "MEU_TELEMOVEL"]
+
+#Informa o utilizador que a Paula apenas saiu de Casa, mas que não saiu definitivamente. Exemplo: Foi só ás compras rapido e volta em menos de 10 min.
+  - alias: Paula saiu de Casa
+    initial_state: true
+    trigger:
+      platform: template
+      value_template: >
+          {% if states.sensor.paulageocode.attributes["Street Number"] != "115" or states.sensor.paulageocode.attributes["Street Number"] != "114" %}
+            true
+          {% else %}
+            false
+          {% endif %}         
+    condition:
+      condition: numeric_state
+      entity_id: sensor.ha_runtime_in_minutes
+      above: 2  
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.paula_status_dropdown
+          option: Apenas Saiu
+      - service: notify.telegram
+        data:
+          title: 'A Paula acabou de sair de casa'
+          message: 'Às {{states.sensor.time.state}}'
+          #target: ["MEUPC", "MEU_TELEMOVEL"]
+          
+#Informa o utilizador que a Paula já saiu mesmo de Casa como da zona de residência.
+  - alias: Paula está Ausente
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: input_select.paula_status_dropdown
+        to: 'Apenas Saiu'
+        for:
+          minutes: 10
+    condition:
+      condition: numeric_state
+      entity_id: sensor.ha_runtime_in_minutes
+      above: 2   
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.paula_status_dropdown
+          option: Ausente
+      - service: notify.telegram
+        data:
+          title: 'A Paula está ausente'
+          message: 'Desde as  {{ (now().strftime("%s") | int - 600) | timestamp_custom("%H:%M")}}'
+          #target: ["MEUPC", "MEU_TELEMOVEL"]
+
+#Informa o utilizador que a Paula não foi a casa durante 24 horas.
+  - alias: Paula ausente por mais de 24 horas
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: input_select.paula_status_dropdown
+        to: 'Ausente'
+        for:
+          hours: 24
+    condition:
+      condition: numeric_state
+      entity_id: sensor.ha_runtime_in_minutes
+      above: 2   
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.paula_status_dropdown
+          option: Ausencia Prolongada
+      - service: notify.telegram
+        data:
+          title: 'A Paula está em ausência prolongada'
+          message: 'Desde do dia {{states.sensor.date.state}} às {{states.sensor.time.state}}'
+          #target: ["MEUPC", "MEU_TELEMOVEL"]
+
+#Informa o utilizador que a Paula acabou de chegar ao Trabalho.
+  - alias: Paula acabou de chegar ao trabalho
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: sensor.paulatrabalhook
+      to: 'paulatrabalhook'
+    condition:
+      condition: numeric_state
+      entity_id: sensor.ha_runtime_in_minutes
+      above: 2   
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.paula_status_dropdown
+          option: notrabalho
+      - service: notify.telegram
+        data:
+          title: 'A Paula está no trabalho'
+          message: 'Desde as {{states.sensor.time.state}}'
+         
+
+#Informa o utilizador que a Paula acabou de sair do Trabalho.
+  - alias: Paula acabou de sair do trabalho
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: sensor.paulatrabalhook
+      from: 'paulatrabalhook'
+      to: 'paulatrabalhonook'
+    condition:
+      condition: numeric_state
+      entity_id: sensor.ha_runtime_in_minutes
+      above: 2   
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.paula_status_dropdown
+          option: Ausente
+      - service: notify.telegram
+        data:
+          title: 'A Paula saiu do trabalho'
+          message: 'Às {{states.sensor.time.state}}'
+          #target: ["MEUPC", "MEU_TELEMOVEL"]
+
+
+
+
+
+        
+#INPUTS_SELECTS
+input_select:
+  rodolfo_status_dropdown:
+    name: Rodolfo
+    options:
+      - Em Casa
+      - Apenas Chegou
+      - Apenas Saiu
+      - Ausente
+      - Ausencia Prolongada
+      - notrabalho
+      
+  paula_status_dropdown:
+    name: Paula
+    options:
+      - Em Casa
+      - Apenas Chegou
+      - Apenas Saiu
+      - Ausente
+      - Ausencia Prolongada
+      - notrabalhop  
+#SENSORS    
+sensor:
+
+  - platform: template
+    sensors:
+      rodolfo_status:
+        value_template: '{{ states.input_select.rodolfo_status_dropdown.state }}'
+        friendly_name: 'Rodolfo'
+        entity_id: input_select.rodolfo_status_dropdown
+      paula_status:
+        value_template: '{{ states.input_select.paula_status_dropdown.state }}'
+        friendly_name: 'Paula'
+        entity_id: input_select.paula_status_dropdown
+      paulatrabalhook:
+        friendly_name: 'paulatrabalhook'
+        value_template: >
+          {% if states.sensor.paulageocode.attributes.Street == "Rua Castilho" or states.sensor.paulageocode.attributes.Street == "Rua Rodrigo da Fonseca"%}
+            paulatrabalhook
+          {% else %} 
+            paulatrabalhonook
+          {% endif %}   
+    
+
+        

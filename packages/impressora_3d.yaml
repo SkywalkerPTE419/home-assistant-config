@@ -1,0 +1,283 @@
+#homeassistant:
+#
+################################################################################
+##                                                                             #
+##                           C U S T O M I Z E                                 #
+##                                                                             #
+################################################################################   
+#        
+#  customize:
+# 
+#
+#    sensor.octoprint_actual_bed_temp:
+#      friendly_name: Temperatura Actual da cama
+#      icon: mdi:printer-3d
+#    sensor.octoprint_actual_tool0_temp:
+#      friendly_name: Temperatura Actual do Extursor
+#      icon: mdi:printer-3d
+#    sensor.octoprint_job_percentage:
+#      friendly_name: Evolução da impressão
+#      icon: mdi:printer-3d
+#    sensor.octoprint_target_bed_temp:
+#      friendly_name: Temperatura desejada da cama
+#      icon: mdi:printer-3d
+#    sensor.octoprint_target_tool0_temp:
+#      friendly_name: Temperatura desejada do Extursor
+#      icon: mdi:printer-3d
+#    sensor.estadocurrente:
+#      icon: mdi:printer-3d
+#    sensor.octo_time_elapsed:
+#      friendly_name: Tempo consumido
+#      icon: mdi:printer-3d
+#    sensor.octo_time_remaining:
+#      friendly_name: Tempo Restante
+#      icon: mdi:printer-3d
+#
+################################################################################
+##                                                                             #
+##                           G R O U P                                         #
+##                                                                             #
+################################################################################       
+#      
+#group:
+#
+#  impressora3d:
+#    view: yes
+#    icon: mdi:video-3d
+#    entities:
+#      - group.impressora_3d
+#    
+#    
+#  impressora_3d:
+#    control: hidden
+#    name: Impressora 3D
+#    entities:
+#      - input_boolean.impressora3d
+#      - camera.impressora_3d
+#      - sensor.estadocurrente
+#      - sensor.octoprint_job_percentage
+#      - sensor.octoprint_actual_bed_temp
+#      - sensor.octoprint_target_bed_temp
+#      - sensor.octoprint_actual_tool0_temp
+#      - sensor.octoprint_target_tool0_temp
+# #     - sensor.octoprint_time_elapsed
+# #     - sensor.octoprint_time_remaining
+#      - sensor.octo_time_remaining
+#      - sensor.octo_time_elapsed
+#      
+################################################################################
+##                                                                             #
+##                           S E N S O R S                                     #
+##                                                                             #
+################################################################################  
+#
+#sensor:      
+#
+#  - platform: octoprint
+#    name: OctoPrint
+#    monitored_conditions:
+#      - Current State
+#      - Temperatures
+#      - Job Percentage  
+#      - Time Remaining
+#      - Time Elapsed    
+#
+#  - platform: template
+#    sensors:
+#    #Estado do Tempo
+#      estadocurrente:
+#        friendly_name: 'Estado da Impressora'
+#        value_template: > 
+#         {%- if is_state('sensor.octoprint_current_state', 'Unknown') -%}
+#          Desligada
+#         {%- elif is_state('sensor.octoprint_current_state', 'Operational') -%}
+#          Pronta para Imprimir
+#         {%- elif is_state('sensor.octoprint_current_state', 'Printing') -%}
+#          A imprimir ... 
+#         {%- endif -%}   
+#      octo_time_remaining:
+#        value_template: >-
+#         {%- macro parse_time(sec) -%}
+#           {%- set w = sec // 604800 -%}
+#           {%- set d = sec % 604800 // 86400 -%}
+#           {%- set h = sec % 604800 % 86400 // 3600 -%}
+#           {%- set m = sec % 604800 % 86400 % 3600 // 60 -%}
+#           {%- set s = sec % 604800 % 86400 % 3600 % 60 -%}
+#           {%- set comma = joiner(', ') -%}
+#           {{- comma() ~ w ~ ' week' ~ ('s' if w != 1) if w -}}
+#           {{- comma() ~ d ~ ' day' ~ ('s' if d != 1) if d -}}
+#           {{- comma() ~ h ~ ' hour' ~ ('s' if h != 1) if h -}}
+#           {{- comma() ~ m ~ ' minute' ~ ('s' if m != 1) if m -}}
+#           {{- comma() ~ s ~ ' second' ~ ('s' if s != 1) if s -}}
+#         {%- endmacro -%}
+#         {{ parse_time(states('sensor.octoprint_time_remaining')|int) }}
+#      octo_time_elapsed:
+#        value_template: >-
+#         {%- macro parse_time(sec) -%}
+#           {%- set w = sec // 604800 -%}
+#           {%- set d = sec % 604800 // 86400 -%}
+#           {%- set h = sec % 604800 % 86400 // 3600 -%}
+#           {%- set m = sec % 604800 % 86400 % 3600 // 60 -%}
+#           {%- set s = sec % 604800 % 86400 % 3600 % 60 -%}
+#           {%- set comma = joiner(', ') -%}
+#           {{- comma() ~ w ~ ' week' ~ ('s' if w != 1) if w -}}
+#           {{- comma() ~ d ~ ' day' ~ ('s' if d != 1) if d -}}
+#           {{- comma() ~ h ~ ' hour' ~ ('s' if h != 1) if h -}}
+#           {{- comma() ~ m ~ ' minute' ~ ('s' if m != 1) if m -}}
+#           {{- comma() ~ s ~ ' second' ~ ('s' if s != 1) if s -}}
+#         {%- endmacro -%}
+#         {{ parse_time(states('sensor.octoprint_time_elapsed')|int) }}         
+################################################################################
+##                                                                             #
+##                         B I N A R Y _  S E N S O R S                        #
+##                                                                             #
+################################################################################  
+#
+#       
+#binary_sensor:
+#  - platform: octoprint
+#    monitored_conditions:
+#      - Printing
+#      - Printing Error
+#      
+#      
+#      
+################################################################################
+##                                                                             #
+##                           S W I T C H E S                                   #
+##                                                                             #
+################################################################################  
+#
+#
+#switch:
+#
+################################################################################
+##                                                                             #
+##                         I N P U T   B O O L E A N S                         #
+##                                                                             #
+################################################################################      
+#        
+#    
+#
+#input_boolean:
+#  impressora3d:
+#    name: Impressora 3D
+#    icon: mdi:printer-3d
+#    initial: off
+#    
+################################################################################
+##                                                                             #
+##                         A U T O M A T I O N S                               #
+##                                                                             #
+################################################################################    
+#automation:
+#
+##Liga a impressora quando o botao do input_boolean está ON    
+#  - alias: 'ligar impressora botao on'
+#    initial_state: true
+#    trigger:
+#      - platform: state
+#        entity_id: input_boolean.impressora3d
+#        to: 'on'
+#    action:
+#      - service: shell_command.ligarimpressora
+#      
+##Liga a impressora quando o botao do input_boolean está OFF          
+#  - alias: 'desligar a impressora botao off'
+#    initial_state: true
+#    trigger:
+#      - platform: state
+#        entity_id: input_boolean.impressora3d
+#        to: 'off'
+#    action:
+#      - service: shell_command.desligarimpressora
+#      
+##Força o botao input_boolean a desligar quando o sistema detecta que a impressora não tem energia.   
+#  - alias: 'botao desligado energia desligada'
+#    initial_state: true
+#    trigger:
+#      platform: template
+#      value_template: >
+#          {%- if is_state("sensor.octoprint_current_state", "unknown") -%}
+#            true
+#           {% else %}
+#            false
+#          {% endif %}
+#    action:
+#      service: input_boolean.turn_off
+#      data:
+#        entity_id: input_boolean.impressora3d  
+#
+##Força o botao input_boolean a ligar quando o sistema detecta que a impressora tem energia. 
+#  - alias: 'botao ligado energia ligada'
+#    initial_state: true
+#    trigger:
+#      platform: template
+#      value_template: >
+#          {%- if is_state("sensor.octoprint_current_state", "Operational") -%}
+#            true
+#           {% else %}
+#            false
+#          {% endif %}
+#    action:
+#      service: input_boolean.turn_on
+#      data:
+#        entity_id: input_boolean.impressora3d         
+#        
+#        
+##Informa o utilizador enviando uma notificação com foto que a impressão chegou aos 50%.                
+#  - alias: 'Informa estado 50'
+#    trigger:
+#      platform: template             
+#      value_template: >
+#         {% if  states.sensor.octoprint_job_percentage.state | float > 50 %}
+#          true
+#         {%- endif %}
+#    action:
+#      - service: notify.telegram
+#        data:
+#          title: ""
+#          message: ""
+#          data:
+#            photo:
+#              url: http://192.168.1.101/webcam/?action=snapshot
+#              caption: "A impressão chegou aos 50%"              
+#
+#
+##Informa o utilizador enviando uma notificação com foto que a impressão chegou ao fim e desliga a impressora passado 2 min.      
+#  - alias: 'informa fim da impressao'
+#    trigger:
+#      platform: template             
+#      value_template: >
+#         {% if  states.sensor.octoprint_job_percentage.state | float == 100 %}
+#          true
+#         {%- endif %}
+#    action:
+#      - service: notify.telegram
+#        data:
+#          title: ""
+#          message: ""
+#          data:
+#            photo:              
+#              url: http://192.168.1.101/webcam/?action=snapshot
+#              caption: "A impressão chegou ao fim"                
+##      - delay:
+##          minutes: 2   
+##      - service: input_boolean.turn_off
+##        data:
+##         entity_id: input_boolean.impressora3d           
+#           
+################################################################################
+##                                                                             #
+##                         S H E L L _ C O M M A N D S                         #
+##                                                                             #
+################################################################################      
+#      
+#shell_command:
+#  ligarimpressora: curl -k "http://192.168.1.101:8080/22/on" 
+#  desligarimpressora: curl -k "http://192.168.1.101:8080/22/off"   
+#      
+#      
+#      
+#      
+#      

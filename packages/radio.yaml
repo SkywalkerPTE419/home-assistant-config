@@ -1,0 +1,428 @@
+homeassistant:
+
+###############################################################################
+#                                                                             #
+#                           C U S T O M I Z E                                 #
+#                                                                             #
+###############################################################################   
+        
+  customize:
+ 
+
+    sensor.zonacentral:
+      icon: mdi:surround-sound
+      
+  
+###############################################################################
+#                                                                             #
+#                           A U T O M A Ç Õ E S                               #
+#                                                                             #
+###############################################################################   
+automation:
+  - alias: 'Ajustar o Volume'
+    trigger:
+      platform: state
+      entity_id: input_number.volume_radio
+    action:
+      service: media_player.volume_set
+      data_template:
+        entity_id: media_player.boxhall
+        volume_level: '{{states.input_number.volume_radio.state}}'
+        
+  - alias: Parar
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Parar"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+     
+        
+
+  - alias: Orbital
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Orbital"
+    action:
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://stream.radio.com.pt/ROLI-ENC-4
+          media_content_type: 'audio/mp3'
+          
+  - alias: Oxigenio
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Oxigenio"
+    action:
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://stream.radio.com.pt/ROLI-ENC-498
+          media_content_type: 'audio/mp3'     
+
+  - alias: Meo Sudoeste
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Meo Sudoeste"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://stream.radio.com.pt/ROLI-ENC-495
+          media_content_type: 'audio/mp3' 
+
+  - alias: Mega Hits
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Mega Hits"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://19553.live.streamtheworld.com:80/MEGA_HITS_SC
+          media_content_type: 'audio/mp3'          
+ 
+  - alias: Cidade FM
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Cidade FM"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://mcrscast.mcr.iol.pt/cidadefm
+          media_content_type: 'audio/mp3'   
+          
+  - alias: Comercial
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Comercial"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://mcrscast.mcr.iol.pt/comercial.mp3
+          media_content_type: 'audio/mp3'  
+
+  - alias: Nova Era
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Nova Era"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://centova.radios.pt:9478/stream/1/ 
+          media_content_type: 'audio/mp3'  
+           
+  - alias: Rfm
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Rfm"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://19553.live.streamtheworld.com:3690/RFM_SC 
+          media_content_type: 'audio/mp3'          
+             
+  - alias: Renascença
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Renascença"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://19593.live.streamtheworld.com:80/RADIO_RENASCENCA_SC 
+          media_content_type: 'audio/mp3'              
+
+
+  - alias: Oceano Pacífico
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Oceano Pacífico"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://19553.live.streamtheworld.com:80/OCEANPACIFIC_SC  
+          media_content_type: 'audio/mp3'  
+
+  - alias: TSF
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "TSF"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://tsfdirecto.tsf.pt/tsfdirecto.mp3  
+          media_content_type: 'audio/mp3'  
+
+  - alias: Antena 1
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Antena 1"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://radiocast.rtp.pt/antena180a.mp3  
+          media_content_type: 'audio/mp3'  
+          
+  - alias: Antena 2
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Antena 2"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://radiocast.rtp.pt/antena180a.mp3  
+          media_content_type: 'audio/mp3'  
+          
+
+  - alias: Antena 3
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Antena 3"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://radiocast.rtp.pt/antena380a.mp3  
+          media_content_type: 'audio/mp3'  
+
+
+  - alias: Tropical FM
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Tropical FM"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://suaradio1.dyndns.ws:10308/stream  
+          media_content_type: 'audio/mp3'  
+          
+  - alias: M80
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "M80"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://mcrscast.mcr.iol.pt/m80   
+          media_content_type: 'audio/mp3'  
+
+  - alias: Musica Anos 80
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Musica Anos 80"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://stm15.conectastm.com:30890/live  
+          media_content_type: 'audio/mp3'  
+
+  - alias: Smooth FM
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Smooth FM"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://mcrscast.mcr.iol.pt/smoothfm
+          media_content_type: 'audio/mp3'       
+
+  - alias: Radio Radar
+    trigger:
+      platform: state
+      entity_id: input_select.estacoes_de_radio
+      to: "Radio Radar"
+    action:
+      - service: media_player.media_stop
+        data:
+          entity_id: media_player.boxhall
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.boxhall
+          media_content_id: http://centova.radios.pt:8497/stream/1/
+          media_content_type: 'audio/mp3'       
+          
+
+
+
+###############################################################################
+#                                                                             #
+#                           S E N S O R S                                     #
+#                                                                             #
+###############################################################################  
+
+sensor:
+
+  - platform: template
+    sensors:
+      zonacentral:  
+        friendly_name: 'Sistema de Som'
+        value_template: >    
+         {%- if is_state('media_player.boxhall', 'off') -%}
+         Sistema Desactivado
+         {%- elif is_state('media_player.boxhall', 'idle') -%}
+         Pronto para reproduzir
+         {%- elif is_state('media_player.boxhall', 'playing') -%}
+         A reproduzir         
+         {%- endif -%}
+###############################################################################
+#                                                                             #
+#                           I N P U T  N U M B E R S                          #
+#                                                                             #
+###############################################################################  
+
+  
+input_number:
+
+  volume_radio:
+      name: Volume
+      icon: mdi:volume-high
+      initial: 0.80
+      min: 0
+      max: 1
+      step: 0.01
+    
+   
+###############################################################################
+#                                                                             #
+#                           I N P U T   S E L E C T                           #
+#                                                                             #
+###############################################################################  
+
+
+input_select:
+  
+  estacoes_de_radio:
+    name: 'Seleciona a estacao de Radio'
+    initial: Nenhuma
+    options:
+      - Parar
+      - Nenhuma
+      - Orbital
+      - Oxigenio
+      - Mega Hits
+      - RFM
+      - Meo Sudoeste
+      - Cidade FM
+      - Comercial
+      - Nova Era
+      - Rfm
+      - Renascença
+      - Oceano Pacífico
+      - TSF
+      - Antena 1
+      - Antena 2
+      - Antena 3
+      - M80
+      - Tropical FM
+      - Musica Anos 80
+      - Smooth FM
+      - Radio Radar
+      
+
+
+
+
+###############################################################################
+#                                                                             #
+#                           G R O U P S                                       #
+#                                                                             #
+###############################################################################  
+
+
+group:
+
+  radio:
+    name: Rádio
+    control: hidden
+    entities:
+      - sensor.zonacentral
+      - input_select.estacoes_de_radio
+      - input_number.volume_radio
+     
+      
+      
+     
+
+

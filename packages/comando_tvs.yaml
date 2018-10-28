@@ -1,0 +1,32 @@
+homeassistant:
+
+
+
+
+      
+     
+
+###############################################################################
+#                                                                             #
+#                           A U T O M A Ç Õ E S                               #
+#                                                                             #
+###############################################################################   
+automation:
+
+#Automação em que uso um comando 433mhz, para quando estou a jantar ou almoçar desligar a luz e tv do quarto da míuda, pois ela esquecesse de tudo ligado.
+       
+  - alias: comando desliga tv bia
+    hide_entity: true
+    trigger:
+      platform: mqtt
+      topic: tele/teste/RESULT
+    condition:
+      condition: template
+      value_template: '{{ trigger.payload_json.RfReceived.Data == "EB7011" }}'      
+    action:
+      service: switch.turn_off
+      data:
+        entity_id: switch.interruptor_quarto_bia, switch.tv_bia
+      
+      
+   

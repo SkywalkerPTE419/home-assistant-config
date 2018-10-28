@@ -1,0 +1,467 @@
+homeassistant:
+
+###############################################################################
+#                                                                             #
+#                           C U S T O M I Z E                                 #
+#                                                                             #
+###############################################################################
+
+  customize:
+
+
+    sensor.erro_aspirador:
+      icon: mdi:close-box
+    sensor.estado_aspirador:
+      icone: hand-pointing-right
+
+
+###############################################################################
+#                                                                             #
+#                         V A C U U M                                         #
+#                                                                             #
+###############################################################################  
+
+vacuum:
+  - platform: xiaomi_miio
+    host: 192.168.1.7
+    token: !secret token_xiaomi
+    name: Aspirador
+   
+###############################################################################
+#                                                                             #
+#                         S E N S O R  S                                      #
+#                                                                             #
+###############################################################################        
+      
+sensor:
+  platform: template
+  sensors:
+    estado_aspirador:
+      friendly_name: 'Estado'
+      value_template: >
+        {%- if states.vacuum.aspirador.attributes.status == "Charging" %}
+          A carregar
+        {% elif states.vacuum.aspirador.attributes.status == "Cleaning" %}
+          A limpar
+        {% elif states.vacuum.aspirador.attributes.status == "Returning home" %}
+          A voltar à base
+        {% elif states.vacuum.aspirador.attributes.status == "Idle" %}
+          Parado
+        {% else %}
+        {{ states.vacuum.aspirador.attributes.status }}
+        {%- endif %}
+
+    succao_aspirador:
+      friendly_name: 'Velocidade de Sucção'
+      value_template: "{{states.vacuum.aspirador.attributes.fan_speed}}"
+      
+    erro_aspirador:
+      friendly_name: 'Existência de Erros'
+      value_template: >
+        {%- if 'Error' in states.vacuum.aspirador.attributes -%}
+        {{ states.vacuum.aspirador.attributes.Error }}
+        {%- else -%}
+        Sem Erros
+        {%- endif -%}
+        
+    bateria_aspirador:
+      friendly_name: "Bateria"
+      value_template: "{{ states.vacuum.aspirador.attributes.battery_level | int }}"
+      unit_of_measurement: '%'
+      icon_template: '{% if states.vacuum.aspirador.attributes.battery_level | int == 100 %}
+                           mdi:battery
+                        {% elif states.vacuum.aspirador.attributes.battery_level | int >= 90 %}
+                           mdi:battery-90
+                        {% elif states.vacuum.aspirador.attributes.battery_level | int >= 80 %}
+                           mdi:battery-80
+                        {% elif states.vacuum.aspirador.attributes.battery_level | int >= 70 %}
+                           mdi:battery-70
+                        {% elif states.vacuum.aspirador.attributes.battery_level | int >= 60 %}
+                           mdi:battery-60
+                        {% elif states.vacuum.aspirador.attributes.battery_level | int >= 50 %}
+                           mdi:battery-50
+                        {% elif states.vacuum.aspirador.attributes.battery_level | int >= 40 %}
+                           mdi:battery-40
+                        {% elif states.vacuum.aspirador.attributes.battery_level | int >= 30 %}
+                           mdi:battery-30
+                        {% elif states.vacuum.aspirador.attributes.battery_level | int >= 20 %}
+                           mdi:battery-20
+                        {% elif states.vacuum.aspirador.attributes.battery_level | int >= 10 %}
+                           mdi:battery-10
+                        {% elif states.vacuum.aspirador.attributes.battery_level == "unknown" %}
+                           mdi:battery-alert
+                        {% else %}
+                           battery-outline
+                        {% endif %}'
+      
+###############################################################################
+#                                                                             #
+#                         I N P U T    S E L E C T                            #
+#                                                                             #
+###############################################################################            
+        
+input_select:
+  
+  estados_de_succao:
+    name: 'Estados de Sucção'
+    initial: Silencioso
+    options:
+      - Silencioso
+      - Balanceado
+      - Turbo
+      - Turbo Maximo
+
+  zonas_de_aspiracao:
+    name: Qual a zona a aspirar?
+    options:
+      - Escolhe a Zona
+      - Casa Toda
+      - Cozinha
+      - Casa de Banho
+      - Hall
+      - Sala
+      - Quarto Bia
+      - Quarto
+
+###############################################################################
+#                                                                             #
+#                         G R O U P                                           #
+#                                                                             #
+###############################################################################          
+    
+group:
+
+  aspirador:
+    view: yes
+    icon: mdi:robot-vacuum
+    entities:
+      - group.aspiradorgroup
+
+  aspiradorgroup:
+    control: hidden
+    name: Aspirador
+    entities:
+      - input_select.zonas_de_aspiracao
+      - sensor.estado_aspirador
+      - input_select.estados_de_succao
+      - sensor.bateria_aspirador
+      - sensor.erro_aspirador
+
+###############################################################################
+#                                                                             #
+#                         A U T O M A T I O N S                               #
+#                                                                             #
+###############################################################################     
+automation:
+
+#Coloca o aspirador em modo silencioso    
+  - alias: Modo Silencioso
+    trigger:
+      platform: state
+      entity_id: input_select.estados_de_succao
+      to: "Silencioso"
+    action:
+      - service: vacuum.set_fan_speed
+        data:
+          entity_id: vacuum.aspirador
+          fan_speed: Quiet
+
+#Coloca o aspirador em modo balanceado           
+  - alias: Modo Balanceado
+    trigger:
+      platform: state
+      entity_id: input_select.estados_de_succao
+      to: "Balanceado"
+    action:
+      - service: vacuum.set_fan_speed
+        data:
+          entity_id: vacuum.aspirador
+          fan_speed: Balanced
+
+#Coloca o aspirador em modo turbo        
+  - alias: Modo Turbo
+    trigger:
+      platform: state
+      entity_id: input_select.estados_de_succao
+      to: "Turbo"
+    action:
+      - service: vacuum.set_fan_speed
+        data:
+          entity_id: vacuum.aspirador
+          fan_speed: Turbo
+ 
+#Coloca o aspirador em modo turbo maximo
+  - alias: Modo Turbo
+    trigger:
+      platform: state
+      entity_id: input_select.estados_de_succao
+      to: "Turbo Maximo"
+    action:
+      - service: vacuum.set_fan_speed
+        data:
+          entity_id: vacuum.aspirador
+          fan_speed: Max
+  
+#Notifica os utilizadores que a aspiracao comecou 
+  - alias: 'Notificacao Inicio de aspiração'
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: sensor.estado_aspirador
+      to: 'A limpar'
+    action:
+      service: notify.geraltelegram
+      data_template:
+        title: 'Início de aspiração'
+        message: "Olá o Chinês iniciou agora a aspiração são neste momento {{states.sensor.time.state}} receberás uma mensagem assim que ele tiver acabado o seu serviço"
+        
+ #Notifica os utilizadores que a aspiracao acabou      
+  - alias: 'Notificacao fim de aspiração'
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: sensor.estado_aspirador
+      to: 'A voltar à base'
+    action:
+      service: notify.geraltelegram
+      data_template:
+        title: 'Fim de aspiração'
+        message: "Olá o Chinês acabou de acabar o seu serviço de aspiração esteve {{states.vacuum.aspirador.attributes.cleaning_time }} minutos a aspirar, e aspirou {{states.vacuum.aspirador.attributes.cleaned_area }} m2. Está com {{states.vacuum.aspirador.attributes.battery_level }} de bateria. Ele está neste momento a regressar à base."
+ 
+#Notifica os utilizadores que o aspirador chegou à base 
+  - alias: 'Notificacao de chegada a base'
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: sensor.estado_aspirador
+      from: 'A voltar à base'
+      to: 'A carregar'
+    action:
+      service: notify.geraltelegram
+      data_template:
+        title: 'Chinês a carregar'
+        message: "O Chinês encontrou a base e encontra-se a carregar"
+        
+#Notifica os utilizadores que ocorreu um erro    
+  - alias: 'Notificacao de erro'
+    initial_state: true
+    trigger:
+      platform: template
+      value_template: >
+          {%- if 'Error' in states.vacuum.aspirador.attributes -%}
+          {{ states.vacuum.aspirador.attributes.Error }}   
+          {% endif %}
+    action:
+      service: notify.geraltelegram
+      data:
+        title: 'Aconteceu alguma coisa'
+        message: 'È melhor desligar o aspirador, concordas?'
+        data:
+          inline_keyboard:
+            - "SIM:/simquero"
+            - "NÃO:/naoquero"
+ 
+#resposta a sim da automacao de cima
+  - alias: 'Resposta a sim' 
+    hide_entity: false
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        data: '/simquero'            
+    action:
+      - service: vacuum.turn_off
+        entity_id: vacuum.aspirador
+        
+      
+#resposta a não da automacao de cima        
+  - alias: 'Resposta a nao'
+    hide_entity: true
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        data: '/naoquero'
+    action:
+      - service: telegram_bot.answer_callback_query
+        data_template:
+          callback_query_id: '{{ trigger.event.data.id }}'
+          message: 'Acho que fizeste mal'
+        
+#Notifica os utilizadores que o aspirador parou no regresso à base
+  - alias: 'Notificacao de parado'
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: sensor.estado_aspirador
+      from: 'A voltar à base'
+      to: 'Parado'
+    action:
+      service: notify.geraltelegram
+      data:
+        title: 'Aconteceu alguma coisa'
+        message: 'O aspirador está parado , aconteceu algo, é melhor desligar concordas?'
+        data:
+          inline_keyboard:
+            - "SIM:/simquerodesligar"
+            - "NÃO:/naoquerodesligar"
+
+#resposta a sim da automação de cima         
+  - alias: 'Resposta a quero desligar'
+    hide_entity: false
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        data: '/simquerodesligar'            
+    action:
+      - service: vacuum.turn_off
+        entity_id: vacuum.aspirador
+        
+      
+#resposta a não da automacao de cima          
+  - alias: 'Resposta a nao quero desligar'
+    hide_entity: true
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        data: '/naoquerodesligar'
+    action:
+      - service: telegram_bot.answer_callback_query
+        data_template:
+          callback_query_id: '{{ trigger.event.data.id }}'
+          message: 'Acho que fizeste mal'       
+
+
+#Notifica os utilizadores que o aspirador parou 
+  - alias: 'Notificacao parou'
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: sensor.estado_aspirador
+      to: 'Parado'
+    action:
+      service: notify.geraltelegram
+      data:
+        title: 'Aconteceu alguma coisa'
+        message: 'O aspirador está parado , aconteceu algo, é melhor desligar concordas?'
+        data:
+          inline_keyboard:
+            - "SIM:/simquerodesligar"
+            - "NÃO:/naoquerodesligar"
+
+#resposta a sim da automação de cima         
+  - alias: 'Resposta a quero desligar_'
+    hide_entity: false
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        data: '/simquerodesligar'            
+    action:
+      - service: vacuum.turn_off
+        entity_id: vacuum.aspirador
+        
+      
+#resposta a não da automacao de cima          
+  - alias: 'Resposta a nao quero desligar_'
+    hide_entity: true
+    trigger:
+      platform: event
+      event_type: telegram_callback
+      event_data:
+        data: '/naoquerodesligar'
+    action:
+      - service: telegram_bot.answer_callback_query
+        data_template:
+          callback_query_id: '{{ trigger.event.data.id }}'
+          message: 'Acho que fizeste mal'        
+            
+#Escolher a zona a aspirar
+
+  - alias: Escolher a zona a aspirar
+    hide_entity: True
+    trigger:
+      platform: state
+      entity_id: input_select.zonas_de_aspiracao
+      from: 'Escolhe a Zona'
+    action:
+      - service: script.turn_on
+        data_template:
+          entity_id: >
+           {% if is_state("input_select.zonas_de_aspiracao", "Casa Toda") %}
+            script.casa_toda
+           {% elif is_state("input_select.zonas_de_aspiracao", "Cozinha") %}
+            script.cozinha
+           {% elif is_state("input_select.zonas_de_aspiracao", "Hall") %}
+            script.hall
+           {% elif is_state("input_select.zonas_de_aspiracao", "Sala") %}
+            script.sala
+            {% elif is_state("input_select.zonas_de_aspiracao", "Quarto") %}
+            script.quarto
+           {% elif is_state("input_select.zonas_de_aspiracao", "Quarto Bia") %}
+            script.quarto_bia
+           {% elif is_state("input_select.zonas_de_aspiracao", "Casa de Banho") %}
+            script.casa_de_banho
+           {% else %}
+           {% endif %}
+      - service: input_select.select_option
+        entity_id: input_select.zonas_de_aspiracao
+        data_template:
+          option: "Escolhe a Zona"
+###############################################################################
+#                                                                             #
+#                         S C R I P T S                                       #
+#                                                                             #
+############################################################################### 
+ 
+ 
+ 
+script:
+
+  cozinha:
+    sequence:
+       service: vacuum.send_command
+       data:
+         entity_id: vacuum.aspirador
+         command: app_zoned_clean
+         params: [[20348,26196,22998,31196,1]]
+         
+  hall:
+    sequence:
+       service: vacuum.send_command
+       data:
+         entity_id: vacuum.aspirador
+         command: app_zoned_clean
+         params: [[22018,22254,24768,25004,1]]
+         
+  sala:
+    sequence:
+       service: vacuum.send_command
+       data:
+         entity_id: vacuum.aspirador
+         command: app_zoned_clean
+         params: [[22018,22254,24768,25004,1]]
+         
+  quarto_bia:
+    sequence:
+       service: vacuum.send_command
+       data:
+         entity_id: vacuum.aspirador
+         command: app_zoned_clean
+         params: [[23566,17875,26616,22275,1]]     
+         
+  quarto:
+    sequence:
+       service: vacuum.send_command
+       data:
+         entity_id: vacuum.aspirador
+         command: app_zoned_clean
+         params: [[20360,17872,23460,22122,1]]
+         
+  casa_toda:
+    sequence:
+       service: homeassistant.turn_on
+       data:
+         entity_id: vacuum.aspirador

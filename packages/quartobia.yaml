@@ -1,0 +1,274 @@
+homeassistant:
+
+###############################################################################
+#                                                                             #
+#                           C U S T O M I Z E                                 #
+#                                                                             #
+###############################################################################   
+        
+  customize:
+ 
+    switch.interruptor_quarto_bia:
+      icon: mdi:lightbulb-outline 
+    switch.candeiro_cama_bia:
+      icon: mdi:lightbulb-outline 
+  
+
+
+
+switch:
+
+
+
+  - platform: template
+    switches:
+      tv_bia:
+        friendly_name: "Tv Bia"
+        value_template: "{% if is_state('binary_sensor.sensor_tv_bia', 'on') %}on{% else %}off{% endif %}"
+        turn_on:
+          service: script.tv_bia
+          entity_id: script.tv_bia
+        turn_off:
+          service: script.tv_bia
+          entity_id: script.tv_bia
+        icon_template: mdi:television
+
+
+        
+  - platform: broadlink
+    host: 192.168.1.5
+    mac: '34:ea:34:58:8a:2a'
+    switches:
+      desligaacbia:
+        friendly_name: 'Ar Condicionado Bia'
+        command_off: 'JgC8AXE5DioPDg0PDQ8OKw0PDg4ODw0PDSsODw0rDisNDw0sDSsOKw0rDisNDwwQDSwMEA0QDBAMEAwQDRAMLAwtDSsOKwwQDBANEAwQDBANEAwQDBAMEA0QDBAMEAwQDRAMEAwQDRAMEAwQDBANEAwQDBAMEA4PDSsODw0PDQ8ODg4PDQ8NAAPNcjgOKg8ODg4ODg8qDg4PDQ8NDw4OKg8ODioPKg4ODykPKg8pDyoPKg4ODw0PKg4ODw0PDg4ODg4PDQ8ODg4PDQ8ODg4ODg8NDw4ODg8NDw0PDg4ODw0PDg4ODg4PDQ8qDw0PDQ8ODioPKg4ODyoODg8NDw0PDg4ODw0PDg4ODg4PDQ8ODg4PDQ8ODg4OKg8ODioPDQ8ODg4PDQ8ODg4ODg8NDw4ODg8NDw0PDg4ODw0PDg4ODg4PDQ8ODg4PDQ8ODg4ODg8NDw4ODg8NDw0PDg4ODw0PDg4ODg4PDQ8ODg4PDQ8NDw4ODg8NDw4ODg4ODw0PDg4ODg4PDQ8ODg4PKg4qDw0PDg4ODg4PDg4ODg4ODg8ODg4NDw4ODg8NDw0PDg8NDw0rDisNKw4rDg4OKw0rDgANBQAAAAAAAAAAAAAAAA=='
+        
+        
+
+  - platform: mqtt
+    name: "Interruptor Quarto Bia"
+    state_topic: "stat/sonoffquartobia/POWER"
+    command_topic: "cmnd/sonoffquartobia/power"
+    availability_topic: "tele/sonoffquartobia/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+
+  - platform: mqtt
+    name: "Candeiro Cama Bia"
+    state_topic: "stat/candeirobia/POWER"
+    command_topic: "cmnd/candeirobia/power"
+    availability_topic: "tele/candeirobia/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true    
+        
+        
+        
+climate:
+  - platform: broadlink
+    name: Ar Condicionado Bia
+    host: 192.168.1.5
+    mac: '34:ea:34:58:8a:2a'
+    ircodes_ini: 'broadlink_climate_codes/daikin.ini'
+    min_temp: 10
+    max_temp: 30
+    target_temp: 20
+    temp_sensor: sensor.temperatura_esphomelib
+    default_operation: idle
+    default_fan_mode: mid
+    customize:
+      operations:
+        - idle
+        - cool
+        - heat
+      fan_modes:
+        - low
+        - mid
+        - high
+        - auto
+                             
+###############################################################################
+#                                                                             #
+#                         INPUT   BOOLEAN                                     #
+#                                                                             #
+###############################################################################      
+        
+    
+
+input_boolean:
+  ac_bia_off:
+    name: Desligar Ac Bia
+    icon: mdi:air-conditioner
+    initial: off
+    
+  tv_bia:
+    name: TV Bia
+    icon: mdi:television-class
+    
+###############################################################################
+#                                                                             #
+#                           A U T O M A Ç Õ E S                               #
+#                                                                             #
+###############################################################################     
+automation:    
+
+#Automação para desligar o candeiro da bia durante a madrugada quando ele está ligado por mais que 10 min.
+
+  - alias: Desligar candeiro da Bia
+    trigger:
+      - platform: state
+        entity_id: switch.candeiro_cama_bia
+        to: 'on'
+        for:
+          minutes: 10
+    condition:
+      condition: time
+      after: '23:00'
+      before: '08:00'
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.candeiro_cama_bia
+         
+#Quando carregado o botao do input_boolean o ac é desligado.
+  - alias: Desliga Ac quarto Bia
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: input_boolean.ac_bia_off
+      to: "off"
+    action:
+     - service: climate.set_operation_mode
+       data:
+         entity_id: climate.ar_condicionado_bia
+         operation_mode: "idle"
+         
+         
+#Automação para activar o botão do input_boolean assim que o ac é ligado.        
+  - alias: Automação botao ac quarto off
+    initial_state: true
+    trigger:
+      platform: template
+      value_template: >
+          {%- if is_state("climate.ar_condicionado_bia", "idle") -%}
+            false
+           {% else %}
+             true
+          {% endif %}
+    action:
+      service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.ac_bia_off
+        
+       
+
+
+
+
+script:
+  tv_bia:
+    sequence:
+    - service: switch.broadlink_send_packet_192_168_1_5
+      data:
+        packet:
+        - 'JgCEAFceDh0ODw4ODx0dDg8PDg4PDg8ODw4PDg4PDg8ODw4ODw4dDw4dDg8OAAq7Vx0PHA8ODw4OHh0ODg8PDg4PDg8ODw4PDg4PDg8ODw4PDh0ODxwPDg8ACrtXHQ8cDw4ODw4eHQ4ODw8ODg8ODw4ODw4PDg8ODw4ODw4PHQ4PHA8ODwANBQAAAAA=' 
+       
+
+###Ligar Tv bia às 07:35
+#  - alias: ligar tv bia de manha
+#    trigger:
+#      platform: time
+#      at: '07:35:00'
+#    condition:
+#      - condition: time
+#        weekday:
+#          - mon
+#          - tue
+#          - wed
+#          - thu
+#          - fri
+#    action:
+#      - service: homeassistant.turn_on
+#        data:
+#          entity_id: media_player.mediaroom_192168192 
+#
+###############################################################################
+#                                                                             #
+#                           B I N A R Y   S E N S O R S                       #
+#                                                                             #
+##############################################################################         
+        
+binary_sensor:
+
+  - platform: device_tracker_sensor
+    entities:
+      - device_tracker.broadlinkquartobia
+      - device_tracker.boxquartobia
+      
+  - platform: mqtt
+    name: "Sonoff Interruptor Quarto Bia"
+    state_topic: "tele/sonoffquartobia/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    
+  - platform: mqtt
+    name: "Sonoff Candeiro Cama Bia"
+    state_topic: "tele/candeirobia/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+      
+
+  - platform: mqtt
+    name: sensor tv bia
+    state_topic: "estado/tvbia"
+    payload_on: "online"
+    payload_off: "offline"
+    device_class: connectivity     
+ 
+      
+###############################################################################
+#                                                                             #
+#                           G R O U P                                         #
+#                                                                             #
+###############################################################################       
+      
+group:
+  
+  quartobia:
+    view: yes
+    icon: mdi:sticker-emoji
+    entities:
+      - group.quartobiagroup
+
+  quartobiagroup:
+    control: hidden
+    name: Quarto Bia
+    entities:
+      - switch.interruptor_quarto_bia
+      - switch.candeiro_cama_bia
+      - switch.tv_bia
+      - climate.ar_condicionado_bia
+      - input_boolean.ac_bia_off
+
+
+     
+      
+
+      
+###############################################################################
+#                                                                             #
+#                           S E N S O R S                                     #
+#                                                                             #
+###############################################################################  
+
+
+    

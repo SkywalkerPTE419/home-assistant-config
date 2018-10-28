@@ -1,0 +1,88 @@
+homeassistant:
+
+###############################################################################
+#                                                                             #
+#                           S E N S O R                                       #
+#                                                                             #
+###############################################################################  
+
+sensor:
+
+  - platform: mqtt
+    name: "Watts"
+    state_topic: "tele/pzem/SENSOR"
+    value_template: "{{ value_json.ENERGY.Power }}"
+    unit_of_measurement: "W"
+    icon: mdi:power-plug
+
+  - platform: mqtt
+    name: "Voltagem"
+    state_topic: "tele/pzem/SENSOR"
+    value_template: "{{ value_json.ENERGY.Voltage }}"
+    unit_of_measurement: "V"
+    icon: mdi:flash
+
+  - platform: mqtt
+    name: "Corrente"
+    state_topic: "tele/pzem/SENSOR"
+    value_template: "{{ value_json.ENERGY.Current }}"
+    unit_of_measurement: "A"
+    icon: mdi:power-socket
+
+
+  - platform: mqtt
+    name: "Consumo Diário"
+    state_topic: "tele/pzem/SENSOR"
+    value_template: "{{ value_json.ENERGY.Today }}"
+    unit_of_measurement: "kWh"
+    icon: mdi:power-socket-eu
+
+  - platform: mqtt
+    name: "Consumo dia Anterior"
+    state_topic: "tele/pzem/SENSOR"
+    value_template: "{{ value_json.ENERGY.Yesterday }}"
+    unit_of_measurement: "kWh"
+    icon: mdi:power-socket-eu
+
+  - platform: mqtt
+    name: "Consumo Total"
+    state_topic: "tele/pzem/SENSOR"
+    value_template: "{{ value_json.ENERGY.Total }}"
+    unit_of_measurement: "kWh"
+    icon: mdi:power-socket-eu
+
+#  - platform: mqtt
+#    name: "Factor Potência"
+#    state_topic: "tele/pzem/SENSOR"
+#    value_template: "{{ value_json.ENERGY.Factor }}"
+#    icon: mdi:percent
+
+
+
+###############################################################################
+#                                                                             #
+#                           G R O U P                                         #
+#                                                                             #
+###############################################################################       
+      
+group:
+  
+  energia:
+    view: yes
+    icon: mdi:power-socket
+    entities:
+      - group.energiagroup
+
+  energiagroup:
+    control: hidden
+    name: Consumo Energético
+    entities:
+      - sensor.watts
+      - sensor.voltagem
+      - sensor.corrente
+      - sensor.consumo_diario
+      - sensor.consumo_dia_anterior
+      - sensor.consumo_total
+      #- sensor.power_factor
+     
+    

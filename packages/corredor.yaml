@@ -1,0 +1,363 @@
+homeassistant:
+
+###############################################################################
+#                                                                             #
+#                           C U S T O M I Z E                                 #
+#                                                                             #
+###############################################################################   
+        
+  customize:
+    switch.luz_hall:
+      icon: mdi:lightbulb-outline 
+    switch.luz_porta_rua:
+      icon: mdi:lightbulb-outline 
+
+      
+     
+
+###############################################################################
+#                                                                             #
+#                           A U T O M A Ç Õ E S                               #
+#                                                                             #
+###############################################################################   
+automation:
+
+#Liga a luz do hall à noite quando chega alguem a casa.
+  - alias: 'Ligar luz hall à chegada à noite'
+    initial_state: true
+    trigger:
+      platform: mqtt
+      topic: tele/teste/RESULT
+    condition:
+      - condition: template
+        value_template: '{{ trigger.payload_json.RfReceived.Data == "B39107" }}' 
+      - condition: time
+        after: '18:30'
+        before: '07:00'        
+    action:
+      service: switch.turn_on
+      data:
+        entity_id: switch.luz_hall
+
+
+#Informa o estado do estado do tempo de manhã mudando a cor do gateway.
+  - alias: Informa tempo cores
+    trigger:
+      - platform: time
+        at: '07:45'
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: light.gateway_light_34ce0091e2e0
+          brightness: 20
+          color_name: >
+            {% if states('sensor.dark_sky_precip_probability') | int >= 0 %}
+              blue
+            {% elif states('sensor.dark_sky_precip_probability') | int >= 20 %}
+              yellow
+            {% elif states('sensor.dark_sky_precip_probability') | int >= 50 %}
+              red
+            {% endif %}
+            
+#Desliga a informação visual do estado do tempo, e o gateway passa a cor branca.
+  - alias: Desliga informaçaõ tempo
+    trigger:
+      - platform: time
+        at: '09:10'
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: light.gateway_light_34ce0091e2e0
+          brightness: 20
+          color_name: white
+
+          
+#Informa o estado do Transito para Alverca mudando a cor do gateway
+  - alias: Informa transito
+    trigger:
+      - platform: time
+        at: '21:20'
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: light.gateway_light_34ce0091e2e0
+          brightness: 20
+          color_name: >
+            {% if states.sensor.rodolfo_trabalho.state >= "0" and states.sensor.rodolfo_trabalho.state <= "23" %}
+              green
+            {% elif states.sensor.rodolfo_trabalho.state >= "24" and states.sensor.rodolfo_trabalho.state <= "29" %}
+              yellow
+            {% elif states.sensor.rodolfo_trabalho.state >= "30" %}
+              red
+            {% endif %}     
+ 
+#Passa para modo de luz de presença.
+  - alias: Modo de luz de presença
+    trigger:
+      - platform: time
+        at: '22:00'
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: light.gateway_light_34ce0091e2e0
+          brightness: 20
+          color_name: blue      
+          
+          
+#Abre a porta da rua.
+  - alias: Abertura da porta da rua
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: input_boolean.porta_rua
+      to: 'on'
+    action:
+    - service: mqtt.publish
+      data:
+        topic: /interruptor/set
+        payload: 1
+    - delay: 00:00:01
+    - service: mqtt.publish
+      data:
+        topic: /interruptor/set
+        payload: 0
+        retain: 'true'
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.porta_rua
+        
+        
+        
+#Activa campainha de casa.
+  - alias: Activa campainha de casa
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: input_boolean.campainha_rua
+      to: 'on'
+    action:
+    - service: mqtt.publish
+      data:
+        topic: /cortacorrente/set
+        payload: 1
+        retain: 'true'
+   
+   
+#Desactiva campainha de casa.
+  - alias: Desactiva campainha de casa
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: input_boolean.campainha_rua
+      to: 'off'
+    action:
+    - service: mqtt.publish
+      data:
+        topic: /cortacorrente/set
+        payload: 0
+        retain: 'true'
+        
+#Desliga a luz do hall passado 2 min
+  - alias: Desliga a luz hall
+    trigger:
+      platform: state
+      entity_id: switch.luz_hall
+      to: 'on'
+      for:
+        minutes: 5
+    action:
+      service: switch.turn_off
+      data:
+        entity_id: switch.luz_hall  
+        
+#Desliga a luz porta da rua passado 2 min
+  - alias: Desliga a luz porta rua
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: switch.luz_porta_rua
+      to: 'on'
+      for:
+        minutes: 5
+    action:
+      service: switch.turn_off
+      data:
+        entity_id: switch.luz_luz_porta_rua 
+        
+
+#Abre a porta da rua automaticamente quando os utilizadores estão proximos de casa.
+#  - alias: Abrir porta da rua automaticamente
+#    trigger:
+#      - platform: numeric_state
+#        entity_id: proximity.rodolfo_casa
+#        below: 300
+#      - platform: numeric_state
+#        entity_id: proximity.paula_casa
+#        below: 300
+#    condition:
+#    - condition: numeric_state
+#      entity_id: sensor.ha_runtime_in_minutes
+#      above: 2   
+#    action:
+#      - service: mqtt.publish
+#        data:
+#          topic: /interruptor/set
+#          payload: 1
+#      - delay: 00:00:01
+#      - service: mqtt.publish
+#        data:
+#          topic: /interruptor/set
+#          payload: 0
+#          retain: 'true'
+#      - service: input_boolean.turn_off
+#        entity_id: input_boolean.porta_rua  
+#
+
+      
+  
+###############################################################################
+#                                                                             #
+#                           S C R I P T S                                     #
+#                                                                             #
+###############################################################################   
+
+#Não existem scripts para as automações acima referidas.
+
+###############################################################################
+#                                                                             #
+#                           S E N S O R S                                     #
+#                                                                             #
+###############################################################################  
+
+
+  
+  
+###############################################################################
+#                                                                             #
+#                           S W I T C H E S                                   #
+#                                                                             #
+###############################################################################  
+
+switch:
+  
+#Switch Aromatizador
+  - platform: mqtt
+    name: "Aromatizador"
+    state_topic: "stat/Sonoffaromatizador/POWER"
+    command_topic: "cmnd/Sonoffaromatizador/power"
+    availability_topic: "tele/Sonoffaromatizador/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    payload_on: "ON"
+    payload_off: "OFF"
+    qos: 1
+    retain: false
+    
+
+  - platform: mqtt
+    name: "Luz Hall"
+    state_topic: "stat/corredor/POWER1"
+    command_topic: "cmnd/corredor/POWER1"
+    availability_topic: "tele/corredor/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: false
+
+
+  - platform: mqtt
+    name: "Luz Porta Rua"
+    state_topic: "stat/corredor/POWER2"
+    command_topic: "cmnd/corredor/POWER2"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: false   
+    
+###############################################################################
+#                                                                             #
+#                         BINARY SENSORS                                      #
+#                                                                             #
+###############################################################################      
+    
+binary_sensor:
+  - platform: mqtt
+    name: "Sonoff Aromatizador"
+    state_topic: "tele/Sonoffaromatizador/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    
+###############################################################################
+#                                                                             #
+#                         INPUT   BOOLEAN                                     #
+#                                                                             #
+###############################################################################      
+        
+    
+
+input_boolean:
+  porta_rua:
+    name: Abrir Porta da Rua
+    icon: mdi:door-open
+    initial: off
+    
+  campainha_rua:
+    name: Campainha da Rua
+    icon: mdi:bell-ring
+    initial: on
+
+###############################################################################
+#                                                                             #
+#                         M E D I A _ P L A Y E R                             #
+#                                                                             #
+############################################################################### 
+    
+media_player:
+
+  - platform: kodi
+    name: boxhall
+    host: 192.168.1.6
+    port: 8080
+    username: root
+    password: root
+    
+###############################################################################
+#                                                                             #
+#                         C A M E R A S                                       #
+#                                                                             #
+###############################################################################     
+  
+android_ip_webcam:
+  - name: 'portaescada'
+    host: 192.168.1.20  
+    
+    
+###############################################################################
+#                                                                             #
+#                         G R O U P S                                         #
+#                                                                             #
+###############################################################################      
+group:
+
+  Hall_de_entrada:
+    view: yes
+    icon: mdi:door
+    entities:
+      - group.hall_de_entrada_group
+      
+  hall_de_entrada_group:
+    control: hidden
+    name: Hall de Entrada
+    entities:
+      - switch.luz_hall
+      - switch.luz_porta_rua
+      - light.gateway_light_34ce0091e2e0  
+ 
+      
+
+  
+  
+
+  

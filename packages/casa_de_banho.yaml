@@ -1,0 +1,270 @@
+homeassistant:
+
+###############################################################################
+#                                                                             #
+#                           C U S T O M I Z E                                 #
+#                                                                             #
+###############################################################################   
+
+  customize:
+    sensor.portawc:
+      icon: mdi:glassdoor
+    switch.radio:
+      friendly_name: "Rádio"
+      icon: mdi:radio   
+    switch.luz_casa_de_banho:
+      icon: mdi:lightbulb-outline
+
+  
+
+
+
+###############################################################################
+#                                                                             #
+#                           A U T O M A Ç Õ E S                               #
+#                                                                             #
+###############################################################################  
+
+automation:
+
+
+
+        
+        
+#Liga a luz da casa de banho das 07:30 às 08:00 quando for activo o movimento.
+  - alias: Liga luz wc
+#    initial_state: true
+    trigger:
+      platform: mqtt
+      topic: home/433toMQTT
+      payload: '12596089'
+    condition:
+      condition: time
+      after: '07:30'
+      before: '08:00'
+    action:
+      service: switch.turn_on
+      data:
+        entity_id: switch.luz_casa_de_banho   
+
+#Liga a luz da casa de banho das 08:00 às 09 em intervalos de 10 min sempre que existir movimento.        
+  - alias: Liga luz wc1
+#    initial_state: true
+    trigger:
+      platform: mqtt
+      topic: home/433toMQTT
+      payload: '12596089'
+    condition:
+      condition: time
+      after: '08:00'
+      before: '09:00'
+    action:
+      service: script.luzcasadebanho10min          
+        
+#Liga a luz da casa de banho das 17:15 às 07:30 em intervalos de 5 min sempre que existir movimento.        
+  - alias: Liga luz wc2
+#    initial_state: true
+    trigger:
+      platform: mqtt
+      topic: home/433toMQTT
+      payload: '12596089'
+    condition:
+      condition: time
+      after: '17:30'
+      before: '07:30'
+    action:
+      service: script.luzcasadebanho5min  
+
+
+#Ligar rádio ou desligar quando o botao é pressionado       
+
+
+  - alias: ligar radio wc
+    hide_entity: true
+    trigger:
+      platform: mqtt
+      topic: tele/teste/RESULT
+    condition:
+      condition: template
+      value_template: '{{ trigger.payload_json.RfReceived.Data == "E0EC9D" }}'      
+    action:
+      service_template: >
+       {% if is_state('switch.radio', 'off') %}
+       switch.turn_on  
+       {%- elif is_state('switch.radio', 'on') -%}
+       switch.turn_off
+       {% endif %}
+      entity_id: switch.radio
+      
+
+         
+
+
+  
+###############################################################################
+#                                                                             #
+#                           S C R I P T S                                     #
+#                                                                             #
+###############################################################################     
+script:
+
+  luzcasadebanho10min:
+    sequence:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.luz_casa_de_banho
+      - delay:
+          minutes: 10
+      - service: switch.turn_off
+        data:
+          entity_id: switch.luz_casa_de_banho
+
+          
+  luzcasadebanho5min:
+    sequence:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.luz_casa_de_banho
+      - delay:
+          minutes: 5
+      - service: switch.turn_off
+        data:
+          entity_id: switch.luz_casa_de_banho
+  
+  xiaomi:
+    sequence:
+      - service: xiaomi_aqara.play_ringtone
+        data:
+          gw_mac: 34:CE:00:91:E2:E0
+          ringtone_id: 1
+          ringtone_vol: 20
+          
+ 
+  
+
+###############################################################################
+#                                                                             #
+#                           S E N S O R S                                     #
+#                                                                             #
+###############################################################################  
+
+sensor:
+
+  - platform: template
+    sensors:
+    #Estado da Porta da casa de Banho
+      portawc:
+        friendly_name: 'Porta WC'
+        value_template: > 
+         {%- if is_state('binary_sensor.porta_casa_de_banho', 'off') -%}
+           Fechada
+         {%- else -%}
+           Aberta
+         {%- endif -%}
+      
+  
+###############################################################################
+#                                                                             #
+#                           S W I T C H E S                                   #
+#                                                                             #
+###############################################################################  
+
+switch:
+#Switch Nº 5
+  - platform: mqtt
+    name: "Luz Casa de Banho"
+    state_topic: "stat/sonoffwcluz/POWER"
+    command_topic: "cmnd/sonoffwcluz/power"
+    availability_topic: "tele/sonoffwcluz/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+  
+#Switch Nº 2    
+  - platform: mqtt
+    name: "Rádio"
+    state_topic: "stat/sonoff69/POWER"
+    command_topic: "cmnd/sonoff69/power"
+    availability_topic: "tele/sonoff69/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+  
+###############################################################################
+#                                                                             #
+#                           B I N A R Y _ S E N S O R S                       #
+#                                                                             #
+###############################################################################  
+binary_sensor:
+
+
+
+  - platform: mqtt
+    name: "Sonoff Interruptor Casa de Banho"
+    state_topic: "tele/sonoffwcluz/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    
+ 
+  - platform: mqtt
+    name: "Sonoff Radio Casa de Banho"
+    state_topic: "tele/sonoff69/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+    
+
+   
+  
+
+ 
+###############################################################################
+#                                                                             #
+#                          I N P U T   B O O L E A N S                        #
+#                                                                             #
+###############################################################################   
+
+input_boolean:
+ 
+  portawc:
+    name: Automacão Porta Wc
+    initial: 'On'
+    icon: 'mdi:gesture-double-tap'
+  
+###############################################################################
+#                                                                             #
+#                           G R O U P                                         #
+#                                                                             #
+###############################################################################   
+
+
+group:
+  
+  wc:
+    view: yes
+    icon: mdi:human-male-female
+    control: hidden
+    entities:
+      - group.casadebanhogroup
+
+
+  casadebanhogroup:
+    control: hidden
+    name: Casa de Banho
+    entities:
+      - switch.radio
+      - switch.luz_casa_de_banho       
+
+
+
+
+
+  
+ 

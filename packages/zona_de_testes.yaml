@@ -1,0 +1,232 @@
+homeassistant:
+
+
+light:
+
+- platform: flux_led
+  devices:
+    192.168.1.23:
+      name: Cama Leds
+
+switch:
+
+  - platform: mqtt
+    name: tomadas
+    command_topic: "cmnd/teste/Backlog"
+    payload_on: "RfKey1"
+    payload_off: "RfKey2"
+    
+             
+
+#  - platform: mqtt
+#    name: Hall Motion
+#    payload_on: "B6FB79"
+#    payload_off: "B6FB79off"
+#    sensor_class: motion
+#    state_topic: "tele/teste/RESULT"
+#    value_template: '{{ value_json.RfReceived.Data }}' 
+          
+##          {% if states.light.ledentrada.attributes.rgb_color ~'' == "(255, 255, 255)" %}
+       
+#  alias: 'Notificador de portas janelas abertas'
+#  initial_state: 'on'
+#  trigger:
+#    platform: state
+#    entity_id: input_boolean.proximity
+#    from: 'off'
+#    to: 'on'
+#  condition:
+#    condition: state
+#    entity_id: group.sensoresportajanela
+#    state: 'on'
+#  action:
+#    - service: notify.luiszanzito
+#      data:
+#        title: "Home Assistant"
+#        message: >
+#         {%- if states.binary_sensor.door_window_sensor_158d00018354d0.state  == "on" -%}
+#         {% if doors | trim != "" %}
+#         {%- set doors = doors ~ "a porta cozinha " -%}
+#         {% else %}
+#         {%- set doors = doors ~ "porta cozinha " -%}
+#         {% endif %}
+#         {%- endif -%}
+#              
+#         {%- if states.binary_sensor.door_window_sensor_158d0001d399b1.state  == "on" -%}
+#         {% if doors | trim != "" %}
+#         {%- set doors = doors ~ "a porta esquerda " -%}
+#         {% else %}
+#         {%- set doors = doors ~ "porta esquerda " -%}
+#         {% endif %}
+#         {%- endif -%}  
+#         
+#         {%- if states.binary_sensor.door_window_sensor_158d0001d39ff1.state == "on" -%}
+#         {% if doors | trim != "" %}
+#         {%- set doors = doors ~ "a porta direita " -%}
+#         {% else %}
+#         {%- set doors = doors ~ "porta direita " -%}
+#         {% endif %}
+#         {%- endif -%}
+#         
+#         {%- if states.binary_sensor.door_window_sensor_158d00015a954e.state == "on"  -%}
+#         {% if doors | trim != "" %}
+#         {%- set doors = doors ~ "a porta principal " -%}
+#         {% else %}
+#         {%- set doors = doors ~ "porta principal " -%}
+#         {% endif %}
+#         {%- endif -%}
+#         
+#         {%- if states.binary_sensor.door_window_sensor_158d0001d86c17.state == "on"  -%}
+#         {% if doors | trim != "" %}
+#         {%- set doors = doors ~ "a cancela grande " -%}
+#         {% else %}
+#         {%- set doors = doors ~ "cancela grande " -%}
+#         {% endif %}
+#         {%- endif -%}
+#         A/s {{ doors}} {%- if 'a' in doors -%} estão {%- else %} está {%- endif %} aberta/s. O Alarme não pode ser ativo.
+#         
+#         
+#         
+#sensoresportajanela:
+#  name: Notificaportasjanelas
+#  entities:
+#    - binary_sensor.door_window_sensor_158d00018354d0
+#    - binary_sensor.door_window_sensor_158d0001d399b1 
+#    - binary_sensor.door_window_sensor_158d0001d39ff1 
+#    - binary_sensor.door_window_sensor_158d00015a954e 
+#    - binary_sensor.door_window_sensor_158d0001d86c17    
+#  
+
+
+#  alias: Front Door Motion Counter While Away
+#  initial_state: 'on'
+#  trigger:
+#    platform: state
+#    entity_id: input_boolean.teste1
+#    to: 'on'
+#  action:
+#    - service: counter.increment
+#      entity_id: counter.meucontador
+#    
+#             
+#  
+script:
+#  telegram:
+#    sequence:
+#      - service: notify.telegram
+#        data_template:
+#          message: "xxxx"
+#          title: "xxxxx"
+#          data:
+#            photo:
+#              url: http://192.168.1.239:81/snapshot.cgi?user=admin&pwd= 
+#              caption: "Dia {{states.sensor.date.state}} às {{states.sensor.time.state}}"
+
+         
+  polly:
+    sequence:
+      - service: tts.amazon_polly_say
+        data_template:
+          entity_id: media_player.boxhall
+          message: >
+            <speak><amazon:auto-breaths frequency='medium'>Olá Beatris bom dia</amazon:auto-breaths></speak>
+
+  google:
+    sequence:
+      - service: tts.google_say
+        data_template:
+          entity_id: media_player.boxhall
+          message: "ola beatris bom dia"
+            
+ 
+  telegram1:
+    sequence:
+      service: notify.telegram
+      data:
+        title: Ring Ring
+        message: 'Campainha'
+        data:
+          photo:
+            - url: http://192.168.1.101:8081
+              caption: Ver ao vivo https://r16ha.duckdns.org:8123/api/camera\_proxy\_stream/camera.teste?api\_password=Rodolfo1983 
+              
+              
+              
+  telegram2:
+    sequence:
+      service: notify.telegram
+      data:
+        title: Ring Ring
+        message: 'Campainha'
+        data:
+          photo:
+            - url: https://r16ha.duckdns.org:8123/api/camera_proxy/camera.teste?api_password=Rodolfo1983
+              caption: Ver ao vivo https://r16ha.duckdns.org:8123/api/camera\_proxy\_stream/camera.teste?api\_password=Rodolfo1983 
+
+        
+#shell_command:
+#  snapshot:  ffmpeg -rtsp_transport tcp -r 25 -i rtsp://192.168.1.72:5540/ch0 -an -t 10 -c copy -map 0 -y -update 1 {{filename}}
+        
+ # telegram1: 
+ #   sequence:  
+ #     service: notify.telegram
+ #     data_template:
+ #       message: ""
+ #       title: ""
+ #       data:
+ #         photo:
+ #           - url: http://sapo.pt
+ #             caption: "Tocaram na campainha da escada"
+ #           - url: https://goo.gl/c12hKRv
+ #             caption: "teste"      
+
+
+
+#
+#
+#-# alias: 'Notifica mondizie'
+ # trigger:
+ #   - platform: template
+ #     value_template: '{{ states.sensor.date.state == strptime(states.calendar.trash.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")}}'
+ #   - platform: time
+ #     at: '18:30:00'
+##
+#  
+#  xiaomi_som:
+#    sequence:
+#      - service: xiaomi_aqara.play_ringtone
+#        data:
+#          gw_mac: 34:CE:00:91:E2:E0
+#          ringtone_id: 20
+#          ringtone_vol: 30
+#          
+#  xiaomi_luz:
+#    sequence:
+#      - service: homeassistant.turn_on
+#        data:
+#          entity_id: light.gateway_light_34ce0091e2e0
+#          color_name: limegreen
+#          brightness: 81
+#          
+#  xiaomi_luz1:
+#    sequence:
+#      - service: homeassistant.turn_on
+#        data:
+#          entity_id: light.gateway_light_34ce0091e2e0
+#          rgb_color: [255, 0, 0]     ##cor vermelha
+#          brightness: 81
+#          
+
+#  zanzitoteste:   
+#    sequence:  
+#      - service: mqtt.publish
+#        data:
+#         topic: zanzito/rodolfo/set_prefs
+#         payload_template: '{"location_high_precision":true}}'
+#          
+#          
+#          
+#          
+# 
+
+   

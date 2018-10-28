@@ -1,0 +1,10 @@
+homeassistant:
+
+mqtt:
+
+  broker: 127.0.0.1
+  port: 1883
+  username: !secret username_mqtt
+  password: !secret password_mqtt
+  keepalive: 60
+  discovery: true

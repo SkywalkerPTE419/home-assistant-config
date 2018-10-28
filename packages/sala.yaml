@@ -1,0 +1,200 @@
+homeassistant:
+
+###############################################################################
+#                                                                             #
+#                           C U S T O M I Z E                                 #
+#                                                                             #
+###############################################################################   
+        
+  customize:
+ 
+    switch.luz_sofa:
+      icon: mdi:lightbulb-outline 
+    switch.luz_sala:
+      icon: mdi:lightbulb-outline 
+    sensor.tvsala:
+      icon: mdi:desktop-mac
+
+    
+###############################################################################
+#                                                                             #
+#                        C L I M A T E                                        #
+#                                                                             #
+###############################################################################      
+        
+climate:
+  - platform: broadlink
+    name: Ar Condicionado Sala
+    host: 192.168.1.4
+    mac: '34:ea:34:58:8a:1d'
+    ircodes_ini: 'broadlink_climate_codes/daikin.ini'
+    min_temp: 10
+    max_temp: 30
+    target_temp: 20
+#    temp_sensor: 
+    default_operation: idle
+    default_fan_mode: mid
+    customize:
+      operations:
+        - idle
+        - cool
+        - heat
+      fan_modes:
+        - low
+        - mid
+        - high
+        - auto    
+
+        
+###############################################################################
+#                                                                             #
+#                         INPUT   BOOLEAN                                     #
+#                                                                             #
+###############################################################################      
+                
+        
+input_boolean:
+   
+  box_sala:
+    name: Box Sala
+    icon: mdi:television-classic
+    initial: off      
+      
+     
+
+###############################################################################
+#                                                                             #
+#                           A U T O M A Ç Õ E S                               #
+#                                                                             #
+###############################################################################   
+automation:
+#Liga o Candeiro ao lado do sofá às 17:30.
+  - alias: Liga Candeiro
+    trigger:
+      platform: time
+      at: '20:30:00'
+    action:
+      service: switch.turn_on
+      data:
+        entity_id: switch.candeiro_sofa
+
+#Desliga o Candeiro ao lado do sofá às 04:30. 
+  - alias: Desliga Candeiro
+    trigger:
+      platform: time
+      at: '04:30'
+    action:
+      service: switch.turn_off
+      data:
+        entity_id: switch.candeiro_sofa
+
+
+  
+  
+###############################################################################
+#                                                                             #
+#                           S W I T C H E S                                   #
+#                                                                             #
+###############################################################################  
+
+switch:
+  
+ 
+
+  - platform: mqtt
+    name: "Luz sofa"
+    state_topic: "stat/sonoff/POWER"
+    command_topic: "cmnd/sonoff/POWER"
+    availability_topic: "tele/sonoff/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: false  
+
+
+  - platform: mqtt
+    name: "Luz Sala"
+    state_topic: "stat/intsala/POWER"
+    command_topic: "cmnd/intsala/POWER"
+    availability_topic: "tele/intsala/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true       
+    
+  - platform: broadlink
+    host: 192.168.1.4
+    mac: '34:ea:34:58:8a:1d'
+    
+
+    
+
+###############################################################################
+#                                                                             #
+#                           B I N A R Y   S E N S O R S                       #
+#                                                                             #
+###############################################################################   
+ 
+binary_sensor:
+
+  - platform: mqtt
+    name: "Sonoff Candeiro Sofa"
+    state_topic: "tele/sonoff/LWT"
+    value_template: "{{ value }}"
+    payload_on: "Online"
+    payload_off: "Offline"
+   
+
+  - platform: device_tracker_sensor
+    entities:
+      - device_tracker.homecinema
+      - device_tracker.tvsala
+      - device_tracker.boxsala
+      - device_tracker.broadlinksala
+      
+      
+
+      
+
+    
+###############################################################################
+#                                                                             #
+#                           I M P R E S S O R A   3 D                         #
+#                                                                             #
+###############################################################################      
+    
+octoprint:
+  host: 192.168.1.101
+  api_key: !secret api_impressora3d
+  bed: true
+  number_of_tools: 1
+
+
+    
+###############################################################################
+#                                                                             #
+#                           G R O U P                                         #
+#                                                                             #
+###############################################################################     
+  
+group:
+  
+  sala:
+    view: yes
+    icon: mdi:sofa
+    entities:
+      - group.salagroup
+
+  salagroup:
+    control: hidden
+    name: Sala
+    entities:
+      - switch.luz_sofa
+      - switch.luz_sala
+      - input_boolean.box_sala
+      - climate.ar_condicionado_sala
+      
