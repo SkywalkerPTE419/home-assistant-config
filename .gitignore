@@ -10,3 +10,5 @@ zona_de_testes.yaml
 storage/
 ~syncthing~home-assistant_v2.db-shm.tmp
 syncthing~home-assistant_v2.db-shm.tmp
+syncthing~home-assistant_v2.db.tmp
+~syncthing~home-assistant_v2.db.tmp
