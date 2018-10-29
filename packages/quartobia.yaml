@@ -122,6 +122,7 @@ automation:
 #Automação para desligar o candeiro da bia durante a madrugada quando ele está ligado por mais que 10 min.
 
   - alias: Desligar candeiro da Bia
+    initial_state: true
     trigger:
       - platform: state
         entity_id: switch.candeiro_cama_bia
@@ -130,7 +131,7 @@ automation:
           minutes: 10
     condition:
       condition: time
-      after: '23:00'
+      after: '22:30'
       before: '08:00'
     action:
       - service: switch.turn_off
