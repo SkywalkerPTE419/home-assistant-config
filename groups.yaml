@@ -14,10 +14,7 @@ default_view:
     - group.computador
     - media_player.boxhall
     - weather.lisboa
-  
 
-  
-  
 ################################################
 #             VISTA CAMERAS                    #
 ################################################
@@ -30,35 +27,6 @@ cameras_transito:
     - camera.ponte_vasco_da_gama_norte
     - camera.ponte_25_abril_sul
     - camera.ponte_25_abril_norte
-
-################################################
-#           VISTA DISPOSITIVOS NA REDE         #
-################################################    
-dispositivos_da_rede:
-  view: yes
-  icon: mdi:access-point-network
-  entities:
-    - group.dispositivos_na_rede
-
-
-dispositivos_na_rede:
-  entities:
-    - binary_sensor.sonoff_candeiro_sofa
-    - binary_sensor.sonoff_plantas_varanda
-    - binary_sensor.sonoff_aromatizador
-    - binary_sensor.sonoff_Interruptor_Casa_de_Banho
-    - binary_sensor.sonoff_radio_Casa_de_Banho
-    - binary_sensor.sonoff_interruptor_quarto_bia
-    - binary_sensor.sonoff_leds_bancada_cozinha
-    - binary_sensor.sonoff_candeiro_cama_bia
-    - binary_sensor.device_tracker_broadlinkcozinha
-    - binary_sensor.device_tracker_broadlinkquartobia
-    - binary_sensor.device_tracker_broadlinksala
-    - binary_sensor.device_tracker_tvcozinha
-
-    
-
-
 
 ################################################
 #             GRUPO FAMÍLIA                    #

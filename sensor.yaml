@@ -68,23 +68,6 @@
   options:
     mode: driving
 
-- platform: google_travel_time
-  name: Casa_trabalho_paula
-  api_key: !secret api_key_googletravel 
-  origin: Senhor Roubado
-  destination: Marquês de Pombal, 1250-021 Lisboa
-  options:
-    mode: transit
-    transit_mode: subway
-    
-- platform: google_travel_time
-  name: trabalho_casa_paula
-  api_key: !secret api_key_googletravel 
-  origin: Marquês de Pombal, 1250-021 Lisboa
-  destination: Senhor Roubado
-  options:
-    mode: transit
-    transit_mode: subway
 
 
 

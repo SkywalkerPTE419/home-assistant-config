@@ -37,7 +37,7 @@ device_tracker: !include device_tracker.yaml
 tts: !include googletts.yaml
 zone: !include zones.yaml
 camera: !include cameras.yaml
-script: !include script.yaml
+#script: !include script.yaml
 proximity: !include proximity.yaml
 history_graph: !include history_graph.yaml
 alarm_control_panel: !include alarm.yaml
@@ -54,7 +54,7 @@ xiaomi_aqara:
       host: 192.168.1.2
 
     
-
+logbook:
 map:
 discovery:
 sun:
@@ -76,10 +76,10 @@ http:
   
 
    
-google:
-  client_id: !secret client_id google
-  client_secret: !secret client_secret_google
-  
+#google:
+#  client_id: !secret client_id google
+#  client_secret: !secret client_secret_google
+#  
   
 media_extractor:
 

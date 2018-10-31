@@ -25,20 +25,28 @@ homeassistant:
 #                                                                             #
 ###############################################################################   
 automation:
-#Liga a fita de Leds da Cozinha entre as 18:00 e as 07:00 quando é detectado movimento. Automação Nº 1
+#Liga Leds da Cozinha entre às 19:300
 
   - alias: Liga Leds da Cozinha
     initial_state: true
     trigger:
-      platform: state
-      entity_id: binary_sensor.leds_da_bancada
-      to: 'on'
-    condition:
-      condition: time
-      after: '19:30'
-      before: '07:00'
+      platform: time
+      at: '19:30'
     action:
-      service: script.ligarledsbancada
+      - service: switch.turn_on
+        data:
+          entity_id: switch.leds_bancada_cozinha
+          
+  - alias: Desliga Leds da Cozinha
+    initial_state: true
+    trigger:
+      platform: time
+      at: '07:30'
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.leds_bancada_cozinha
+        
         
  
       
@@ -99,23 +107,6 @@ automation:
 
 
 script:               
-#Script referente à automação Nº 3
-  ligarledsbancada:
-    sequence:
-      - service: switch.turn_on
-        data:
-          entity_id: switch.leds_bancada_cozinha
-      - delay:
-          minutes: 10
-      - service: switch.turn_off
-        data:
-          entity_id: switch.leds_bancada_cozinha
-      - service: mqtt.publish
-        data:
-          topic: tele/teste/RESULT
-          payload: B6FB79off
-          retain: 'true'
-   
 
   tv_cozinha_on:
     sequence:
@@ -149,29 +140,6 @@ sensor:
 #                           B I N A R Y   S E N S O R S                       #
 #                                                                             #
 ###############################################################################  
-        
-binary_sensor:
-
-  - platform: mqtt
-    name: "Leds da bancada"
-    payload_on: "B6FB79"
-    payload_off: "B6FB79off"
-    sensor_class: motion
-    state_topic: "tele/teste/RESULT"
-    value_template: '{{ value_json.RfReceived.Data}}' 
-    retain: true
-
-  - platform: mqtt
-    name: "Sonoff Leds Bancada Cozinha"
-    state_topic: "tele/sonoff108/LWT"
-    value_template: "{{ value }}"
-    payload_on: "Online"
-    payload_off: "Offline"
-    
-  - platform: device_tracker_sensor
-    entities:
-      - device_tracker.broadlinkcozinha
-
 
 ###############################################################################
 #                                                                             #

@@ -45,23 +45,6 @@ climate:
         - high
         - auto    
 
-        
-###############################################################################
-#                                                                             #
-#                         INPUT   BOOLEAN                                     #
-#                                                                             #
-###############################################################################      
-                
-        
-input_boolean:
-   
-  box_sala:
-    name: Box Sala
-    icon: mdi:television-classic
-    initial: off      
-      
-     
-
 ###############################################################################
 #                                                                             #
 #                           A U T O M A Ç Õ E S                               #
@@ -72,7 +55,7 @@ automation:
   - alias: Liga Candeiro
     trigger:
       platform: time
-      at: '20:30:00'
+      at: '19:30:00'
     action:
       service: switch.turn_on
       data:
@@ -103,9 +86,9 @@ switch:
 
   - platform: mqtt
     name: "Luz sofa"
-    state_topic: "stat/sonoff/POWER"
-    command_topic: "cmnd/sonoff/POWER"
-    availability_topic: "tele/sonoff/LWT"
+    state_topic: "stat/candeirosala/POWER"
+    command_topic: "cmnd/candeirosala/POWER"
+    availability_topic: "tele/candeirosala/LWT"
     payload_available: "Online"
     payload_not_available: "Offline"
     qos: 1
@@ -124,14 +107,11 @@ switch:
     qos: 1
     payload_on: "ON"
     payload_off: "OFF"
-    retain: true       
+    retain: false      
     
   - platform: broadlink
     host: 192.168.1.4
     mac: '34:ea:34:58:8a:1d'
-    
-
-    
 
 ###############################################################################
 #                                                                             #
@@ -139,42 +119,8 @@ switch:
 #                                                                             #
 ###############################################################################   
  
-binary_sensor:
-
-  - platform: mqtt
-    name: "Sonoff Candeiro Sofa"
-    state_topic: "tele/sonoff/LWT"
-    value_template: "{{ value }}"
-    payload_on: "Online"
-    payload_off: "Offline"
-   
-
-  - platform: device_tracker_sensor
-    entities:
-      - device_tracker.homecinema
-      - device_tracker.tvsala
-      - device_tracker.boxsala
-      - device_tracker.broadlinksala
-      
-      
-
-      
-
-    
-###############################################################################
-#                                                                             #
-#                           I M P R E S S O R A   3 D                         #
-#                                                                             #
-###############################################################################      
-    
-octoprint:
-  host: 192.168.1.101
-  api_key: !secret api_impressora3d
-  bed: true
-  number_of_tools: 1
 
 
-    
 ###############################################################################
 #                                                                             #
 #                           G R O U P                                         #
@@ -195,6 +141,5 @@ group:
     entities:
       - switch.luz_sofa
       - switch.luz_sala
-      - input_boolean.box_sala
       - climate.ar_condicionado_sala
       

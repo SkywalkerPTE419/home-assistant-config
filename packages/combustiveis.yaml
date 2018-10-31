@@ -1,10 +1,5 @@
 homeassistant:
 
-
- 
-
-  
-
 ###############################################################################
 #                                                                             #
 #                           G R O U P                                         #
@@ -42,6 +37,7 @@ automation:
 
 #Ao iniciar o Home Assistant corre o batch fuel_info.sh
 - alias: Correr Combustiveis
+  initial_state: true
   trigger:
     platform: homeassistant
     event: start
@@ -51,6 +47,7 @@ automation:
     
 #Actualiza os preços todos os dias às 2 da manhã, só  não altera se o posto de combustivel não tiver alterado na base deles.
 - alias: Atualiza todos os dias
+  initial_state: true
   trigger:
     platform: time
     at: '02:00'
@@ -60,7 +57,7 @@ automation:
     
 # O  utilizador ao escrever /combustiveis no telegram recebe os preços actuais do Posto de Combustível
 - alias: Precos Combustiveis
-  hide_entity: true
+  initial_state: true
   trigger: 
     platform: event
     event_type: telegram_command

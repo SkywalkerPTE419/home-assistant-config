@@ -1,6 +1,5 @@
 homeassistant:
 
-
 light:
 
 - platform: flux_led

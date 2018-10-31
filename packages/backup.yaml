@@ -1,0 +1,30 @@
+homeassistant:
+
+################################################################################
+##                                                                             #
+##                         A U T O M A C O E S                                 #
+##                                                                             #
+################################################################################   
+
+automation:
+
+#Faz um backup total do hassio às 03:00 am.
+  - alias: Backup hassio 03:00 am
+    trigger:
+      platform: time
+      at: '03:00'
+    action:
+    - service: hassio.snapshot_full
+      data_template:
+        name: Automated Backup {{ now().strftime('%Y-%m-%d') }}
+    
+# Envia para a minha conta dropbox o backup do hassio às 04:00 da manhã.
+  - alias: Envio Dropbox 04:00 am
+    trigger:
+      platform: time
+      at: '4:00'
+    action:
+    - service: hassio.addon_stdin
+      data_template:
+        addon: 7be23ff5_dropbox_sync
+        input: {"command":"upload"}

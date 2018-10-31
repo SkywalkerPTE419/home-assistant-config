@@ -14,11 +14,13 @@ homeassistant:
       icon: mdi:lightbulb-outline 
   
 
-
+###############################################################################
+#                                                                             #
+#                           S W I T C H E S                                   #
+#                                                                             #
+###############################################################################
 
 switch:
-
-
 
   - platform: template
     switches:
@@ -55,7 +57,7 @@ switch:
     qos: 1
     payload_on: "ON"
     payload_off: "OFF"
-    retain: true
+    retain: false
 
   - platform: mqtt
     name: "Candeiro Cama Bia"
@@ -67,7 +69,7 @@ switch:
     qos: 1
     payload_on: "ON"
     payload_off: "OFF"
-    retain: true    
+    retain: false 
         
         
         
@@ -93,25 +95,8 @@ climate:
         - mid
         - high
         - auto
-                             
-###############################################################################
-#                                                                             #
-#                         INPUT   BOOLEAN                                     #
-#                                                                             #
-###############################################################################      
-        
-    
 
-input_boolean:
-  ac_bia_off:
-    name: Desligar Ac Bia
-    icon: mdi:air-conditioner
-    initial: off
-    
-  tv_bia:
-    name: TV Bia
-    icon: mdi:television-class
-    
+
 ###############################################################################
 #                                                                             #
 #                           A U T O M A Ç Õ E S                               #
@@ -137,41 +122,6 @@ automation:
       - service: switch.turn_off
         data:
           entity_id: switch.candeiro_cama_bia
-         
-#Quando carregado o botao do input_boolean o ac é desligado.
-  - alias: Desliga Ac quarto Bia
-    initial_state: true
-    trigger:
-      platform: state
-      entity_id: input_boolean.ac_bia_off
-      to: "off"
-    action:
-     - service: climate.set_operation_mode
-       data:
-         entity_id: climate.ar_condicionado_bia
-         operation_mode: "idle"
-         
-         
-#Automação para activar o botão do input_boolean assim que o ac é ligado.        
-  - alias: Automação botao ac quarto off
-    initial_state: true
-    trigger:
-      platform: template
-      value_template: >
-          {%- if is_state("climate.ar_condicionado_bia", "idle") -%}
-            false
-           {% else %}
-             true
-          {% endif %}
-    action:
-      service: input_boolean.turn_on
-      data:
-        entity_id: input_boolean.ac_bia_off
-        
-       
-
-
-
 
 script:
   tv_bia:
@@ -179,27 +129,7 @@ script:
     - service: switch.broadlink_send_packet_192_168_1_5
       data:
         packet:
-        - 'JgCEAFceDh0ODw4ODx0dDg8PDg4PDg8ODw4PDg4PDg8ODw4ODw4dDw4dDg8OAAq7Vx0PHA8ODw4OHh0ODg8PDg4PDg8ODw4PDg4PDg8ODw4PDh0ODxwPDg8ACrtXHQ8cDw4ODw4eHQ4ODw8ODg8ODw4ODw4PDg8ODw4ODw4PHQ4PHA8ODwANBQAAAAA=' 
-       
-
-###Ligar Tv bia às 07:35
-#  - alias: ligar tv bia de manha
-#    trigger:
-#      platform: time
-#      at: '07:35:00'
-#    condition:
-#      - condition: time
-#        weekday:
-#          - mon
-#          - tue
-#          - wed
-#          - thu
-#          - fri
-#    action:
-#      - service: homeassistant.turn_on
-#        data:
-#          entity_id: media_player.mediaroom_192168192 
-#
+        - 'JgCEAFceDh0ODw4ODx0dDg8PDg4PDg8ODw4PDg4PDg8ODw4ODw4dDw4dDg8OAAq7Vx0PHA8ODw4OHh0ODg8PDg4PDg8ODw4PDg4PDg8ODw4PDh0ODxwPDg8ACrtXHQ8cDw4ODw4eHQ4ODw8ODg8ODw4ODw4PDg8ODw4ODw4PHQ4PHA8ODwANBQAAAAA='
 ###############################################################################
 #                                                                             #
 #                           B I N A R Y   S E N S O R S                       #
@@ -207,26 +137,6 @@ script:
 ##############################################################################         
         
 binary_sensor:
-
-  - platform: device_tracker_sensor
-    entities:
-      - device_tracker.broadlinkquartobia
-      - device_tracker.boxquartobia
-      
-  - platform: mqtt
-    name: "Sonoff Interruptor Quarto Bia"
-    state_topic: "tele/sonoffquartobia/LWT"
-    value_template: "{{ value }}"
-    payload_on: "Online"
-    payload_off: "Offline"
-    
-  - platform: mqtt
-    name: "Sonoff Candeiro Cama Bia"
-    state_topic: "tele/candeirobia/LWT"
-    value_template: "{{ value }}"
-    payload_on: "Online"
-    payload_off: "Offline"
-      
 
   - platform: mqtt
     name: sensor tv bia
@@ -258,18 +168,3 @@ group:
       - switch.candeiro_cama_bia
       - switch.tv_bia
       - climate.ar_condicionado_bia
-      - input_boolean.ac_bia_off
-
-
-     
-      
-
-      
-###############################################################################
-#                                                                             #
-#                           S E N S O R S                                     #
-#                                                                             #
-###############################################################################  
-
-
-    

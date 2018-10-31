@@ -1,0 +1,139 @@
+homeassistant:
+
+###############################################################################
+#                                                                             #
+#                           D E V I C E __ T R A C K E R                      #
+#                                                                             #
+###############################################################################   
+
+binary_sensor:
+  - platform: ping
+    name: Gateway Xiaomi
+    host: 192.168.1.2
+  - platform: ping
+    name: Box Kodi
+    host: 192.168.1.6
+  - platform: ping
+    name: Broadlink Cozinha
+    host: 192.168.1.3 
+  - platform: ping
+    name: Broadlink Sala
+    host: 192.168.1.4 
+  - platform: ping
+    name: Broadlink Quarto Bia
+    host: 192.168.1.5 
+  - platform: ping
+    name: Aspirador
+    host: 192.168.1.7 
+  - platform: ping
+    name: Galaxy S3
+    host: 192.168.1.8  
+  - platform: ping
+    name: Candeiro Sala
+    host: 192.168.1.9     
+  - platform: ping
+    name: Nodemcu Tv Cozinha
+    host: 192.168.1.13 
+  - platform: ping
+    name: Oukitel
+    host: 192.168.1.12  
+  - platform: ping
+    name: Nodemcu Tv Bia
+    host: 192.168.1.15  
+  - platform: ping
+    name: Tv Sala
+    host: 192.168.1.16 
+  - platform: ping
+    name: Telemovel Paula
+    host: 192.168.1.17  
+  - platform: ping
+    name: Radio Wc
+    host: 192.168.1.69 
+  - platform: ping
+    name: Sonoff Plantas
+    host: 192.168.1.71
+  - platform: ping
+    name: luz Wc
+    host: 192.168.1.108  
+  - platform: ping
+    name: Leds Bancada
+    host: 192.168.1.109
+  - platform: ping
+    name: Luz Quarto Bia
+    host: 192.168.1.114
+  - platform: ping
+    name: Candeiro Cama Bia
+    host: 192.168.1.115  
+  - platform: ping
+    name: Luz cozinha
+    host: 192.168.1.120
+  - platform: ping
+    name: Bridge
+    host: 192.168.1.130
+  - platform: ping
+    name: Luz Hall e Rua
+    host: 192.168.1.133 
+  - platform: ping
+    name: Luz Sala
+    host: 192.168.1.138
+  - platform: ping
+    name: Pzem
+    host: 192.168.1.181
+  - platform: ping
+    name: Nodemcu Campainha
+    host: 192.168.1.14 
+  - platform: ping
+    name: Telemovel Camara
+    host: 192.168.1.20
+  - platform: ping
+    name: Luz Quarto
+    host: 192.168.1.26
+
+###############################################################################
+#                                                                             #
+#                           G R O U P                                         #
+#                                                                             #
+###############################################################################     
+
+group:
+  
+  dispositivos_rede:
+    view: yes
+    icon: mdi:access-point-network
+    control: hidden
+    entities:
+      - group.dispositivos_rede_group
+
+
+  dispositivos_rede_group:
+    control: hidden
+    name: Dispositivos na rede
+    entities:
+      - binary_sensor.gateway_xiaomi
+      - binary_sensor.box_kodi
+      - binary_sensor.broadlink_cozinha
+      - binary_sensor.broadlink_sala
+      - binary_sensor.broadlink_quarto_Bia
+      - binary_sensor.aspirador
+      - binary_sensor.galaxy_s3
+      - binary_sensor.candeiro_sala
+      - binary_sensor.nodemcu_tv_cozinha
+      - binary_sensor.oukitel
+      - binary_sensor.nodemcu_tv_bia
+      - binary_sensor.tv_sala
+      - binary_sensor.telemovel_paula
+      - binary_sensor.radio_wc
+      - binary_sensor.sonoff_plantas
+      - binary_sensor.luz_wc
+      - binary_sensor.leds_bancada
+      - binary_sensor.luz_quarto_bia
+      - binary_sensor.candeiro_cama_bia
+      - binary_sensor.luz_cozinha
+      - binary_sensor.bridge
+      - binary_sensor.luz_hall_e_rua
+      - binary_sensor.luz_sala
+      - binary_sensor.pzem
+      - binary_sensor.luz_quarto
+
+
+

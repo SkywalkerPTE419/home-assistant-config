@@ -150,3 +150,179 @@ zteg_r228_2:
   name: 36ce00007b1e
   picture:
   track: true
+
+pong:
+  hide_if_away: false
+  icon:
+  mac:
+  name: pong
+  picture:
+  track: true
+
+gateway_xiomi:
+  hide_if_away: false
+  icon:
+  mac:
+  name: gateway xiomi
+  picture:
+  track: true
+
+broadlink_cozinha:
+  hide_if_away: false
+  icon:
+  mac:
+  name: broadlink cozinha
+  picture:
+  track: true
+
+broadlink_sala:
+  hide_if_away: false
+  icon:
+  mac:
+  name: broadlink sala
+  picture:
+  track: true
+
+candeiro_sala:
+  hide_if_away: false
+  icon:
+  mac:
+  name: candeiro sala
+  picture:
+  track: true
+
+nodemcu_tv_cozinha:
+  hide_if_away: false
+  icon:
+  mac:
+  name: nodemcu tv cozinha
+  picture:
+  track: true
+
+radio_wc:
+  hide_if_away: false
+  icon:
+  mac:
+  name: radio wc
+  picture:
+  track: true
+
+luz_wc:
+  hide_if_away: false
+  icon:
+  mac:
+  name: luz wc
+  picture:
+  track: true
+
+leds_bancada:
+  hide_if_away: false
+  icon:
+  mac:
+  name: leds bancada
+  picture:
+  track: true
+
+luz_quarto_bia:
+  hide_if_away: false
+  icon:
+  mac:
+  name: luz quarto bia
+  picture:
+  track: true
+
+candeiro_cama_bia:
+  hide_if_away: false
+  icon:
+  mac:
+  name: candeiro cama bia
+  picture:
+  track: true
+
+luz_cozinha:
+  hide_if_away: false
+  icon:
+  mac:
+  name: luz cozinha
+  picture:
+  track: true
+
+bridge:
+  hide_if_away: false
+  icon:
+  mac:
+  name: bridge
+  picture:
+  track: true
+
+luz_hall:
+  hide_if_away: false
+  icon:
+  mac:
+  name: luz hall
+  picture:
+  track: true
+
+luz_sala:
+  hide_if_away: false
+  icon:
+  mac:
+  name: luz sala
+  picture:
+  track: true
+
+pzem:
+  hide_if_away: false
+  icon:
+  mac:
+  name: pzem
+  picture:
+  track: true
+
+nodemcu_campainha:
+  hide_if_away: false
+  icon:
+  mac:
+  name: nodemcu campainha
+  picture:
+  track: true
+
+telemovel_camera:
+  hide_if_away: false
+  icon:
+  mac:
+  name: telemovel camera
+  picture:
+  track: true
+
+broadlink_quarto_bia:
+  hide_if_away: false
+  icon:
+  mac:
+  name: broadlink quarto bia
+  picture:
+  track: true
+
+box_android:
+  hide_if_away: false
+  icon:
+  mac:
+  name: box android
+  picture:
+  track: true
+
+aspirador:
+  hide_if_away: false
+  icon:
+  mac:
+  name: aspirador
+  picture:
+  track: true
+
+galaxy_s3:
+  hide_if_away: false
+  icon:
+  mac:
+  name: galaxy s3
+  picture:
+  track: true
