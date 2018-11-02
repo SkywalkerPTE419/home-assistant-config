@@ -416,7 +416,7 @@ script:
     - service: tts.amazon_polly_say
       entity_id: media_player.boxhall
       data_template:
-        message: <speak><amazon:auto-breaths frequency='medium'>O chinês terminou a aspiração na zona {{ states.input_select.zonas_de_aspiracao.state | lower }}. Limpou cerca de {{ states.vacuum.aspirador.attributes.cleaned_area }} metros quadrados durante {{ states.vacuum.aspirador.attributes.cleaning_time }} minutos e está carregando no momento.</amazon:auto-breaths></speak>
+        message: <speak><amazon:auto-breaths frequency='medium'>O chinês terminou a aspiração na zona {{ states.input_select.zonas_de_aspiracao.state | lower }}. Limpou cerca de {{ states.vacuum.aspirador.attributes.cleaned_area }} metros quadrados durante {{ states.vacuum.aspirador.attributes.cleaning_time }} minutos e está a carregar agora.</amazon:auto-breaths></speak>
 
   aspirador_alerta_erro:
     alias: Aspirador casa - Erro
