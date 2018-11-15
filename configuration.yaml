@@ -61,7 +61,11 @@ sun:
 conversation:
 logger:
   default: error
+#  logs:
+#    homeassistant.components.mqtt: debug
 recorder:
+  purge_keep_days: 1
+  purge_interval: 1
 history:
 #logbook:
 
@@ -83,8 +87,8 @@ http:
   
 media_extractor:
 
-weather:
-  - platform: ipma
+#weather:
+#  - platform: ipma
   
   
 

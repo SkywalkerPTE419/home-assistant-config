@@ -155,21 +155,8 @@ automation:
         topic: /cortacorrente/set
         payload: 0
         retain: 'true'
-        
-#Desliga a luz do hall passado 2 min
-  - alias: Desliga a luz hall
-    trigger:
-      platform: state
-      entity_id: switch.luz_hall
-      to: 'on'
-      for:
-        minutes: 5
-    action:
-      service: switch.turn_off
-      data:
-        entity_id: switch.luz_hall  
-        
-#Desliga a luz porta da rua passado 2 min
+      
+##Desliga a luz porta da rua passado 2 min
   - alias: Desliga a luz porta rua
     initial_state: true
     trigger:
@@ -181,8 +168,76 @@ automation:
     action:
       service: switch.turn_off
       data:
-        entity_id: switch.luz_luz_porta_rua 
+        entity_id: switch.luz_luz_porta_rua
+
+##Recebe on publica off sensor movimento hall
+  - alias: Recebe on publica off sensor movimento hall
+    initial_state: 'on'
+    trigger:
+      platform: state
+      entity_id: binary_sensor.movimentohall 
+      from: 'off'
+      to: 'on'
+      for:
+        seconds: 3
+    action:
+    - service: mqtt.publish
+      data:
+        topic: tele/teste/RESULT
+        payload: B6FB79_off
+     
         
+        
+###Liga luz hall quando existe movimento
+#  - alias: Movimento Hall ligar
+#    initial_state: true
+#    trigger:
+#      platform: state
+#      entity_id: binary_sensor.movimentohall 
+#      from: 'off'
+#      to: 'on'
+#    condition:
+#      - condition: time
+#        after: '19:30:00'
+#        before: '07:00:00'
+#    action:
+#      - service: switch.turn_on
+#        data:
+#          entity_id: switch.luz_hall 
+#
+#Desliga luz hall quando não existe movimento
+  - alias: movimento hall desligar
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: binary_sensor.movimentohall
+      to:  'off'
+      for: 
+        seconds: 30
+    condition:
+      - condition: time
+        after: '19:30:00'
+        before: '07:00:00'
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.luz_hall 
+
+binary_sensor:    
+
+  -  platform: mqtt
+     name: "movimentohall"
+     state_topic: "tele/teste/RESULT"
+     value_template: '{{value_json.RfReceived.Data}}'
+     payload_on: "B6FB79"
+     payload_off: "B6FB79_off"
+     device_class: Motion
+     qos: 1
+     
+
+
+
+
 
 #Abre a porta da rua automaticamente quando os utilizadores estão proximos de casa.
 #  - alias: Abrir porta da rua automaticamente

@@ -18,9 +18,11 @@
   name: 'Consumo'
   unit_of_measurement: 'Wh'
   value_template: '{{ value_json.consumo }}'   
-
   
-
+  
+- platform: uptime
+  name: "HA runtime in minutes"
+  unit_of_measurement: minutes
 
 #SENSORES MQTT    
 - platform: mqtt
@@ -60,16 +62,16 @@
   
 #Plataforma Google Travel Time
 # De casa ate ao trabalho Rodolfo
-- platform: google_travel_time
-  name: rodolfo_trabalho
-  api_key: !secret api_key_googletravel 
-  origin: !secret origem_googletravel
-  destination: !secret destino_googletravel
-  options:
-    mode: driving
-
-
-
+#- platform: google_travel_time
+#  name: rodolfo_trabalho
+#  api_key: !secret api_key_googletravel 
+#  origin: !secret origem_googletravel
+#  destination: !secret destino_googletravel
+#  options:
+#    mode: driving
+#
+#
+#
 
 #Plataforma Geocode Rodolfo   
 - platform: google_geocode
@@ -236,7 +238,7 @@
                         {% elif states.sensor.rodolfo_bateria_telemovel.state == "unknown" %}
                            mdi:battery-alert
                         {% else %}
-                           battery-outline
+                           mdi:battery-outline
                         {% endif %}'
     paula_bateria_tlm:
       friendly_name: "Estado da Bateria da Paula"

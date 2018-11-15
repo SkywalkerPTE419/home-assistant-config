@@ -1,0 +1,130 @@
+homeassistant:
+###############################################################################
+#                                                                             #
+#                           S E N S O R S                                     #
+#                                                                             #
+###############################################################################  
+
+sensor:
+
+#Vai obter o valor que ficou retido no broker mqtt.
+
+  - platform: mqtt
+    name: agua animais
+    state_topic: "agua/animais"
+    qos: 1
+
+#Vai mostrar no UI o estado real da Água do recipiente.
+  - platform: template
+    sensors:
+      sensorkikouki:
+        friendly_name: 'Água kiko e Uki'
+        value_template: > 
+          {%- if is_state('sensor.agua_animais', 'True') -%}
+           Água Limpa
+          {%- elif is_state('sensor.agua_animais', 'False') -%}
+           Água Turva
+          {%- endif -%}
+        icon_template: '{% if states.sensor.agua_animais.state == "True" %}
+                           mdi:paw
+                        {% else %}
+                           mdi:paw
+                        {% endif %}'          
+###############################################################################
+#                                                                             #
+#                           A U T O M A T I O N                               #
+#                                                                             #
+###############################################################################  
+automation:
+
+#Verifica o estado do sensor de agua (off) e publica no mqtt o seu estado.
+
+  - alias: Estado de sensor off
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.water_leak_sensor_158d000255fd91
+        to: 'off'
+    action:
+    - service: mqtt.publish
+      data:
+        topic: agua/animais
+        payload: False
+        retain: true
+
+
+#Verifica o estado do sensor de agua (on) e publica no mqtt o seu estado.
+  - alias: Estado de sensor on
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.water_leak_sensor_158d000255fd91
+        to: 'on'
+    action:
+    - service: mqtt.publish
+      data:
+        topic: agua/animais
+        payload: True
+        retain: true        
+        
+        
+        
+###############################################################################
+#                                                                             #
+#                           R E S T __ C O M M A N D                          #
+#                                                                             #
+###############################################################################  
+        
+        
+        
+        
+#rest_command:
+#  agua_limpa:
+#    url: 'http://192.168.1.85:8123/api/states/sensor.uki_kiko?api_password=Rodolfo1983'
+#    method: post
+#    content_type: 'application/json'
+#    payload: '{"state": "Água Limpa", "attributes": {"unit_of_measurement": "", "friendly_name": "Água Limpa"}}'
+#    
+#  agua_turva:
+#    url: 'http://192.168.1.85:8123/api/states/sensor.uki_kiko?api_password=Rodolfo1983'
+#    method: post
+#    content_type: 'application/json'
+#    payload: '{"state": "Água Turva", "attributes": {"unit_of_measurement": "", "friendly_name": "Água Turva"}}'
+#
+###############################################################################
+#                                                                             #
+#                           A U T O M A T I O N                               #
+#                                                                             #
+###############################################################################  
+
+##Faz a leitura do estado do sensor no broker mqtt e publica no sensor do HA que a agua está turva.       
+#  - alias: Leitura mqtt off
+#    initial_state: true
+#    trigger:
+#      - platform: homeassistant
+#        event: start
+#      - platform: state
+#        entity_id: sensor.agua_animais
+#        to: 'False'
+#    condition:
+#      condition: state
+#      entity_id: sensor.agua_animais
+#      state: 'False'
+#    action:
+#      - service: rest_command.agua_turva
+#
+##Faz a leitura do estado do sensor no broker mqtt e publica no sensor do HA que a agua está Limpa.  
+#  - alias: Leitura mqtt on
+#    initial_state: true
+#    trigger:
+#      - platform: homeassistant
+#        event: start 
+#      - platform: state
+#        entity_id: sensor.agua_animais
+#        to: 'False'        
+#    condition:
+#      condition: state
+#      entity_id: sensor.agua_animais
+#      state: 'True'
+#    action:
+#      - service: rest_command.agua_limpa    

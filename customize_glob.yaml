@@ -5,3 +5,9 @@ input_boolean.*:
 switch.*:
   custom_ui_state_card: state-card-custom-ui
   show_last_changed: true
+  
+sensor.sensorkikouki*:
+  custom_ui_state_card: state-card-custom-ui
+  templates:
+    hs_color: "if (state === 'Água Turva') return [0, 100, 100];
+    else if (state === 'Água Limpa') return [120, 100, 100];"
