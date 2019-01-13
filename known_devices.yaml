@@ -322,7 +322,6 @@ aspirador:
 galaxy_s3:
   hide_if_away: false
   icon:
-  mac:
   name: galaxy s3
   picture:
   track: true
