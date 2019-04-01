@@ -1229,24 +1229,3 @@ sensor:
                TVI H
           {%- endif -%}
   
-
-###############################################################################
-#                                                                             #
-#                           G R O U P S                                       #
-#                                                                             #
-###############################################################################  	  
-group:
-
-  boxs:
-    name: Boxs Vodafone
-    control: hidden
-    entities:
-      - sensor.boxsvodafone
-      - input_select.zona_da_box
-      - input_select.canal
-      - script.aumentarvolumeboxsala
-      - script.diminuirvolumeboxsala
-      - script.aumentarvolumeboxquarto
-      - script.diminuirvolumeboxquarto
-      - script.reproducaobox
-     
